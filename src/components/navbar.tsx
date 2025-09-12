@@ -18,21 +18,31 @@ import React from 'react';
 
 export default function Navbar() {
 	return (
-			<>
-				<nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-white shadow-md rounded-full">
-					<div className="flex items-center justify-between bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-2xl rounded-full py-2 px-6">
-						<span className="text-lg font-extrabold text-blue-700 tracking-wide mr-12">MyApp</span>
-						<div className="flex items-center space-x-6">
-							<a href="#" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors px-2 py-1 rounded hover:bg-blue-100">Home</a>
-							<a href="#" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors px-2 py-1 rounded hover:bg-blue-100">About</a>
-							<a href="#" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors px-2 py-1 rounded hover:bg-blue-100">Contact</a>
-						</div>
+		<>
+			<style>{`
+				@keyframes navbarFadeIn {
+					0% { opacity: 0; transform: translateY(-30px) scale(0.98); }
+					100% { opacity: 1; transform: translateY(0) scale(1); }
+				}
+			`}</style>
+			<nav
+				className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-white shadow-md rounded-full"
+				style={{
+					animation: 'navbarFadeIn 0.7s cubic-bezier(0.4,0,0.2,1)'
+				}}
+			>
+				<div className="flex items-center justify-between bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-2xl rounded-full py-2 px-6">
+					<span className="text-lg font-extrabold text-blue-700 tracking-wide mr-12">MyApp</span>
+					<div className="flex items-center space-x-6">
+						<a href="#" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors px-2 py-1 rounded hover:bg-blue-100">Home</a>
+						<a href="#" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors px-2 py-1 rounded hover:bg-blue-100">About</a>
+						<a href="#" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors px-2 py-1 rounded hover:bg-blue-100">Announcements</a>
+						<a href="#" className="text-gray-600 hover:text-blue-700 font-semibold transition-colors px-2 py-1 rounded hover:bg-blue-100">Contact</a>
 					</div>
-				</nav>
-				<div className="mt-32">
-					
 				</div>
-			</>
+			</nav>
+			<div className="mt-32"></div>
+		</>
 	);
 }
 
