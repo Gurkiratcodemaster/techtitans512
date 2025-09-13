@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Navbar from "@/components/navbar";
+import { Navbar } from "@/components/navbar";
 import LoginButton from "./loginbutton";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
