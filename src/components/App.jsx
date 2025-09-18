@@ -161,7 +161,6 @@ const App = () => {
         );
     };
 
-    // Main render logic
     return (
         <div className="bg-gray-100 flex items-center justify-center min-h-screen p-4" style={{ fontFamily: 'Inter, sans-serif' }}>
             <div id="app" className="w-full flex justify-center">
