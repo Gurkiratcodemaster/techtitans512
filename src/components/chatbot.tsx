@@ -1,6 +1,12 @@
 "use client";
 import { useEffect } from "react";
 
+declare global {
+  interface Window {
+    botpressWebChat?: any;
+  }
+}
+
 export default function Chatbot() {
   useEffect(() => {
     const script1 = document.createElement("script");
@@ -23,3 +29,16 @@ export default function Chatbot() {
     <div className="fixed bottom-4 right-4 z-50" id="bp-web-chat" />
   );
 }
+
+// Function to open the chatbot from anywhere in the app
+export const openChatbot = () => {
+  if (typeof window !== 'undefined' && window.botpressWebChat) {
+    window.botpressWebChat.toggle();
+  } else {
+    // If botpress isn't loaded yet, try to find the trigger button
+    const botpressButton = document.querySelector('[data-testid="bp-widget-web-chat"] button');
+    if (botpressButton) {
+      (botpressButton as HTMLButtonElement).click();
+    }
+  }
+};

@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
+import Footer from "@/components/footer";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -12,6 +13,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   <div className="bg-blue-50 min-h-screen">
       {!hideNavbar && <Navbar />}
   <main className="pt-12">{children}</main>
+      {!hideNavbar && <Footer />}
     </div>
   );
 }
