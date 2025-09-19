@@ -1,5 +1,6 @@
 
 "use client";
+import Link from "next/link";
 import LoginButton from "./loginbutton";
 
 export function Navbar() {
@@ -8,10 +9,10 @@ export function Navbar() {
       <span className="text-2xl font-bold text-blue-700">Career Choice</span>
       <div className="flex-1 flex justify-center">
         <nav className="flex items-center space-x-8">
-          <a href="#" className="px-2 py-1 rounded-full text-gray-600 font-semibold transition-colors duration-300 hover:bg-gradient-to-r from-blue-400 to-blue-600 hover:text-white">Home</a>
-          <a href="#" className="px-2 py-1 rounded-full text-gray-600 font-semibold transition-colors duration-300 hover:bg-gradient-to-r from-blue-400 to-blue-600 hover:text-white">About</a>
-          <a href="#" className="px-2 py-1 rounded-full text-gray-600 font-semibold transition-colors duration-300 hover:bg-gradient-to-r from-blue-400 to-blue-600 hover:text-white">Announcements</a>
-          <a href="#" className="px-2 py-1 rounded-full text-gray-600 font-semibold transition-colors duration-300 hover:bg-gradient-to-r from-blue-400 to-blue-600 hover:text-white">Contact</a>
+          <Link href="/" className="px-2 py-1 text-gray-600 font-semibold hover:text-blue-600 relative transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-600 after:transition-all after:duration-300 hover:after:w-full">Home</Link>
+          <Link href="/about" className="px-2 py-1 text-gray-600 font-semibold hover:text-blue-600 relative transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-600 after:transition-all after:duration-300 hover:after:w-full">About</Link>
+          <a href="#" className="px-2 py-1 text-gray-600 font-semibold hover:text-blue-600 relative transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-600 after:transition-all after:duration-300 hover:after:w-full">Announcements</a>
+          <Link href="/contact" className="px-2 py-1 text-gray-600 font-semibold hover:text-blue-600 relative transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-600 after:transition-all after:duration-300 hover:after:w-full">Contact</Link>
         </nav>
       </div>
       <div>
