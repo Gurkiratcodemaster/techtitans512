@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
-import Chatbot from "@/components/chatbot";
 
 export const metadata: Metadata = {
   title: "Career Choice",
@@ -18,8 +17,6 @@ export default function RootLayout({
       <body>
         {/* Delegate rendering of Navbar & children to ClientLayout */}
         <ClientLayout>{children}</ClientLayout>
-        <Chatbot />
-
       </body>
     </html>
   );

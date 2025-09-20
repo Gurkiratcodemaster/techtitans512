@@ -10,7 +10,7 @@ export function Navbar() {
         <nav className="flex items-center space-x-8">
           <Link href="/" className="px-2 py-1 text-gray-600 font-semibold hover:text-blue-500 relative transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Home</Link>
           <Link href="/about" className="px-2 py-1 text-gray-600 font-semibold hover:text-blue-500 relative transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">About</Link>
-          <a href="#" className="px-2 py-1 text-gray-600 font-semibold hover:text-blue-500 relative transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Announcements</a>
+          <Link href="/chatbot" className="px-2 py-1 text-gray-600 font-semibold hover:text-blue-500 relative transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">AI Chat</Link>
           <Link href="/contact" className="px-2 py-1 text-gray-600 font-semibold hover:text-blue-500 relative transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Contact</Link>
         </nav>
       </div>
