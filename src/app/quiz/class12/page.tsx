@@ -333,11 +333,24 @@ export default function Class12Quiz() {
                 </div>
               </div>
 
-              <div className="mt-8 bg-blue-50 rounded-2xl p-6">
-                <h4 className="text-lg font-semibold text-gray-800 mb-3">Important Reminder:</h4>
-                <p className="text-gray-700">
-                  This quiz provides guidance based on your interests and preferences. Remember that success in any field requires dedication, hard work, and continuous learning. Consider talking to career counselors, professionals in your chosen field, and taking aptitude tests for more comprehensive career guidance.
-                </p>
+              <div className="mt-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 border-2 border-green-200">
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h4 className="text-xl font-bold text-gray-800">🎯 Ready to Explore Your Career Journey?</h4>
+                  </div>
+                  <p className="text-gray-700 mb-6">
+                    Discover interactive diagrams showing exact paths from your chosen degree to dream careers, including entrance exams, specializations, and salary expectations!
+                  </p>
+                  <Link
+                    href="/career-results"
+                    className="inline-block px-10 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white text-lg font-semibold rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    🚀 View Interactive Career Path Diagrams
+                  </Link>
+                </div>
               </div>
 
               <div className="text-center mt-8 space-y-4">
@@ -347,12 +360,27 @@ export default function Class12Quiz() {
                 >
                   Retake Quiz
                 </button>
+                
+                <Link
+                  href="/career-results"
+                  className="inline-block px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 font-semibold mr-4"
+                >
+                  🎯 View Interactive Career Path
+                </Link>
+                
                 <Link
                   href="/"
                   className="inline-block px-8 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-full hover:from-gray-600 hover:to-gray-700 transition-all duration-300 font-semibold"
                 >
                   Back to Home
                 </Link>
+              </div>
+              
+              <div className="mt-6 bg-blue-50 rounded-2xl p-6">
+                <h4 className="text-lg font-semibold text-gray-800 mb-3">Important Reminder:</h4>
+                <p className="text-gray-700">
+                  This quiz provides guidance based on your interests and preferences. Remember that success in any field requires dedication, hard work, and continuous learning. Consider talking to career counselors, professionals in your chosen field, and taking aptitude tests for more comprehensive career guidance.
+                </p>
               </div>
             </div>
           </div>
