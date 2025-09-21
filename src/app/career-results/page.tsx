@@ -3,12 +3,17 @@ import { useState, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 import dynamic from 'next/dynamic';
 
-// Dynamically import the D3 component to avoid SSR issues
-const CareerPathVisualization = dynamic(
-  () => import("../../components/CareerPathVisualization"),
+// Dynamically import the Enhanced D3 component to avoid SSR issues
+const EnhancedCareerVisualization = dynamic(
+  () => import("../../components/EnhancedCareerVisualization"),
   { 
     ssr: false,
-    loading: () => <p className="text-center py-8">Loading visualization...</p>
+    loading: () => (
+      <div className="text-center py-12">
+        <div className="inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p className="text-gray-600">✨ Loading your beautiful career universe...</p>
+      </div>
+    )
   }
 );
 
@@ -180,7 +185,7 @@ export default function CareerResultsPage() {
                 showVisualization ? 'bg-blue-700' : ''
               }`}
             >
-              {showVisualization ? 'Hide' : 'Explore'} Interactive Career Path Diagram
+              {showVisualization ? 'Hide' : '✨ Explore'} Beautiful Career Universe
             </button>
           </div>
 
@@ -189,7 +194,7 @@ export default function CareerResultsPage() {
             <div className={`transform transition-all duration-500 ease-out ${
               showVisualization ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
             }`}>
-              <CareerPathVisualization recommendedDegrees={results.recommendedDegrees} />
+              <EnhancedCareerVisualization recommendedDegrees={results.recommendedDegrees} />
             </div>
           )}
 

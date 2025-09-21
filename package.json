@@ -11,6 +11,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^2.0.32",
     "@ai-sdk/react": "^2.0.47",
+    "@dataconnect/generated": "file:src/dataconnect-generated",
     "@huggingface/hub": "^2.6.5",
     "@huggingface/inference": "^4.8.0",
     "@huggingface/mcp-client": "^0.2.3",
@@ -19,6 +20,7 @@
     "ai": "^5.0.47",
     "axios": "^1.12.2",
     "d3": "^7.9.0",
+    "firebase": "^12.3.0",
     "huggingface": "^1.4.0",
     "langchain": "^0.3.34",
     "next": "15.5.3",

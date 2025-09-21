@@ -1,5 +1,6 @@
-﻿"use client";
+"use client";
 import { useState, useRef, useEffect } from 'react';
+import { useOnlineStatus } from './OfflineSupport';
 
 interface Message {
   id: string;
@@ -9,6 +10,7 @@ interface Message {
 }
 
 export default function Chatbot() {
+  const isOnline = useOnlineStatus();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -188,21 +190,36 @@ export default function Chatbot() {
 
       {/* Input Form */}
       <form onSubmit={handleSubmit} className="bg-white border rounded-xl p-4 shadow-sm">
+        {/* Connection Status */}
+        {!isOnline && (
+          <div className="mb-3 p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm flex items-center gap-2">
+            <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+            <span>Offline Mode - Limited AI features. Basic career guidance available.</span>
+          </div>
+        )}
+        
         <div className="flex space-x-3">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about careers, exams, salaries, or study paths..."
+            placeholder={isOnline 
+              ? "Ask about careers, exams, salaries, or study paths..."
+              : "Try: 'engineering careers' or 'NEET preparation' (Offline mode)"
+            }
             className="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+            className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
+              isOnline 
+                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                : 'bg-amber-600 hover:bg-amber-700 text-white'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            {isLoading ? "Thinking..." : "Send"}
+            {isLoading ? "Thinking..." : isOnline ? "Send" : "Ask (Offline)"}
           </button>
         </div>
       </form>

@@ -31,7 +31,7 @@ export async function generateHaiku() {
 }
 
 // Streaming example (like in your chatbot)
-export async function generateStreamingResponse(prompt: string) {
+export async function generateStreamingResponse(prompt) {
   try {
     const stream = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",

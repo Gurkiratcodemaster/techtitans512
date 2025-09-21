@@ -5,6 +5,26 @@ import ClientLayout from "@/components/ClientLayout";
 export const metadata: Metadata = {
   title: "Career Choice",
   description: "A platform to help students choose right career paths",
+  manifest: "/manifest.json",
+  keywords: ["career guidance", "education", "JEE", "NEET", "MBA", "Indian students"],
+  authors: [{name: "Career Choice Team"}],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Career Choice",
+  },
+  openGraph: {
+    title: "Career Choice - AI Career Guidance",
+    description: "AI-powered career guidance for Indian students. Works offline!",
+    type: "website",
+  },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#1E40AF',
 };
 
 export default function RootLayout({
