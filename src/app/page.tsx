@@ -65,12 +65,12 @@ export default function Home() {
           <div className={`text-center mb-16 transform transition-all duration-500 ease-out ${
             loaded ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'
           }`}>
-            <h1 className={`text-5xl font-bold text-gray-800 mb-6 transform transition-all duration-400 delay-50 ${
+            <h1 className={`text-5xl font-extrabold text-gray-800 mb-6 transform transition-all duration-400 delay-50 ${
               loaded ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
             }`}>
-              Welcome to <span className="text-blue-600 text-6xl">Career Choice</span>
+              Welcome to <span className="text-blue-600 text-6xl font-black">Career Choice</span>
             </h1>
-            <p className={`text-xl text-gray-600 max-w-3xl mx-auto transform transition-all duration-400 delay-100 ${
+            <p className={`text-xl text-gray-600 max-w-3xl mx-auto font-medium transform transition-all duration-400 delay-100 ${
               loaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
             }`}>
               Discover your perfect career path with our AI-powered guidance, personalized assessments, and expert recommendations.
@@ -93,16 +93,16 @@ export default function Home() {
               <h2 className={`text-2xl font-bold text-gray-800 mb-4 transform transition-all duration-400 delay-200 ${
                 loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
               }`}>Career Assessment</h2>
-              <p className={`text-gray-600 mb-6 transform transition-all duration-400 delay-250 ${
+              <p className={`text-gray-600 mb-6 font-medium transform transition-all duration-400 delay-250 ${
                 loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
               }`}>Take our comprehensive quiz to discover which career paths align with your skills and interests.</p>
               <div className={`space-y-3 transform transition-all duration-400 delay-300 ${
                 loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
               }`}>
-                <Link href="/quiz/class10" className="block w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-semibold text-center transform hover:scale-105">
+                <Link href="/quiz/class10" className="block w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105">
                   Class 10 Assessment
                 </Link>
-                <Link href="/quiz/class12" className="block w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-semibold text-center transform hover:scale-105">
+                <Link href="/quiz/class12" className="block w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105">
                   Class 12 Assessment
                 </Link>
               </div>
@@ -122,13 +122,13 @@ export default function Home() {
               <h2 className={`text-2xl font-bold text-gray-800 mb-4 transform transition-all duration-400 delay-250 ${
                 loaded ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
               }`}>AI Career Guidance</h2>
-              <p className={`text-gray-600 mb-6 transform transition-all duration-400 delay-300 ${
+              <p className={`text-gray-600 mb-6 font-medium transform transition-all duration-400 delay-300 ${
                 loaded ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
               }`}>Chat with our intelligent assistant for personalized career advice and guidance tailored to your goals.</p>
 
               <button
                 onClick={() => setShowCornerChatbot(true)}
-                className={`w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full font-semibold transform transition-transform duration-300 ease-in-out hover:scale-105 hover:from-blue-500 hover:to-blue-600 delay-350 ${
+                className={`w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full font-bold transform transition-transform duration-300 ease-in-out hover:scale-105 hover:from-blue-500 hover:to-blue-600 delay-350 ${
                   loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-95'
                 }`}
               >
@@ -150,12 +150,12 @@ export default function Home() {
               <h2 className={`text-2xl font-bold text-gray-800 mb-4 transform transition-all duration-400 delay-300 ${
                 loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
               }`}>Learning Resources</h2>
-              <p className={`text-gray-600 mb-6 transform transition-all duration-400 delay-350 ${
+              <p className={`text-gray-600 mb-6 font-medium transform transition-all duration-400 delay-350 ${
                 loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
               }`}>Access curated educational content, courses, and materials to develop skills for your chosen career path.</p>
               <Link 
                 href="/study-materials" 
-                className={`block w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-semibold text-center transform hover:scale-105 delay-400 ${
+                className={`block w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105 delay-400 ${
                   loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
                 }`}
               >
@@ -179,19 +179,19 @@ export default function Home() {
                   </svg>
                 </div>
                 
-                <h2 className={`text-3xl font-bold text-gray-800 mb-6 transform transition-all duration-400 delay-350 ${
+                <h2 className={`text-3xl font-extrabold text-gray-800 mb-6 transform transition-all duration-400 delay-350 ${
                   loaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
                 }`}>Transform Your Free Time Into Career Success</h2>
                 
                 <div className={`space-y-4 text-gray-600 mb-8 transform transition-all duration-400 delay-400 ${
                   loaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
                 }`}>
-                  <p className="text-lg leading-relaxed">
+                  <p className="text-lg leading-relaxed font-medium">
                     Just completed your 12th grade or have some free time on your hands? Don't let this valuable time go to waste! 
                     Our comprehensive skill development programs are designed specifically for students like you who want to get ahead in their career journey.
                   </p>
                   
-                  <p className="text-base leading-relaxed">
+                  <p className="text-base leading-relaxed font-normal">
                     Whether you're waiting for college admissions, preparing for entrance exams, or simply looking to enhance your skillset, 
                     our industry-aligned programs will give you the competitive edge you need. From technical skills like programming and digital marketing 
                     to soft skills like communication and leadership, we offer a wide range of courses taught by industry experts.
@@ -204,7 +204,7 @@ export default function Home() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
-                      <span className="text-sm">Industry-relevant curriculum</span>
+                      <span className="text-sm font-medium">Industry-relevant curriculum</span>
                     </div>
                     
                     <div className="flex items-center space-x-3">
@@ -213,7 +213,7 @@ export default function Home() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
-                      <span className="text-sm">Expert mentorship</span>
+                      <span className="text-sm font-medium">Expert mentorship</span>
                     </div>
                     
                     <div className="flex items-center space-x-3">
@@ -222,7 +222,7 @@ export default function Home() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
-                      <span className="text-sm">Practical projects & portfolio</span>
+                      <span className="text-sm font-medium">Practical projects & portfolio</span>
                     </div>
                     
                     <div className="flex items-center space-x-3">
@@ -231,14 +231,14 @@ export default function Home() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
-                      <span className="text-sm">Certification upon completion</span>
+                      <span className="text-sm font-medium">Certification upon completion</span>
                     </div>
                   </div>
                 </div>
                 
                 <Link 
                   href="/skills" 
-                  className={`inline-block px-8 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-300 font-semibold transform hover:scale-105 delay-450 ${
+                  className={`inline-block px-8 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-300 font-bold transform hover:scale-105 delay-450 ${
                     loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
                   }`}
                 >
@@ -308,8 +308,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">AI-Powered Guidance</h3>
-                <p className="text-gray-600 text-sm">Smart recommendations based on current market trends, job opportunities, and your unique profile.</p>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">AI-Powered Guidance</h3>
+                <p className="text-gray-600 text-sm font-medium">Smart recommendations based on current market trends, job opportunities, and your unique profile.</p>
               </div>
 
               {/* Career Roadmaps */}
@@ -321,8 +321,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Career Roadmaps</h3>
-                <p className="text-gray-600 text-sm">Step-by-step pathways showing required skills, education, and milestones for your chosen career.</p>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">Career Roadmaps</h3>
+                <p className="text-gray-600 text-sm font-medium">Step-by-step pathways showing required skills, education, and milestones for your chosen career.</p>
               </div>
 
               {/* College & Course Selection */}
@@ -334,8 +334,8 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">College & Course Selection</h3>
-                <p className="text-gray-600 text-sm">Comprehensive database of colleges, courses, and admission requirements tailored to your goals.</p>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">College & Course Selection</h3>
+                <p className="text-gray-600 text-sm font-medium">Comprehensive database of colleges, courses, and admission requirements tailored to your goals.</p>
               </div>
 
               {/* Skill Development */}
@@ -347,21 +347,21 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Skill Development</h3>
-                <p className="text-gray-600 text-sm">Industry-relevant training programs and certifications to boost your employability and career growth.</p>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">Skill Development</h3>
+                <p className="text-gray-600 text-sm font-medium">Industry-relevant training programs and certifications to boost your employability and career growth.</p>
               </div>
 
               {/* Ongoing Support */}
               <div className={`text-center transform transition-all duration-400 delay-700 ${
                 loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
               }`}>
-                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM12 18a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM12 6a6 6 0 100 12 6 6 0 000-12z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Ongoing Support</h3>
-                <p className="text-gray-600 text-sm">24/7 AI assistant and expert mentorship to guide you through every step of your career journey.</p>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">Ongoing Support</h3>
+                <p className="text-gray-600 text-sm font-medium">24/7 AI assistant and expert mentorship to guide you through every step of your career journey.</p>
               </div>
             </div>
           </div>
@@ -379,13 +379,13 @@ export default function Home() {
             </div>
             
             <div className="text-center mb-6">
-              <h2 className={`text-2xl font-bold text-gray-800 mb-3 transform transition-all duration-400 delay-450 ${
+              <h2 className={`text-2xl font-extrabold text-gray-800 mb-3 transform transition-all duration-400 delay-450 ${
                 loaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
               }`}>Never Miss Important Dates!</h2>
-              <p className={`text-base text-gray-700 mb-2 font-medium transform transition-all duration-400 delay-500 ${
+              <p className={`text-base text-gray-700 mb-2 font-bold transform transition-all duration-400 delay-500 ${
                 loaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
               }`}>Timeline Tracker - Your Personal Academic Calendar</p>
-              <p className={`text-gray-600 max-w-2xl mx-auto transform transition-all duration-400 delay-550 ${
+              <p className={`text-gray-600 max-w-2xl mx-auto font-medium transform transition-all duration-400 delay-550 ${
                 loaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
               }`}>
                 Get timely notifications for admission deadlines, scholarship applications, entrance test dates, and career opportunities
@@ -397,7 +397,7 @@ export default function Home() {
               <div className={`bg-gray-50 rounded-2xl p-4 transform transition-all duration-400 delay-600 ${
                 loaded ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
               }`}>
-                <h5 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <h5 className="text-lg font-bold text-gray-800 mb-3 flex items-center">
                   <svg className="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-5 5v-5zM12 17H7l5 5v-5z" />
                   </svg>
@@ -438,27 +438,27 @@ export default function Home() {
                 loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
               }`}>
                 <h5 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                  <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Upcoming Important Dates
                 </h5>
                 <div className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between py-2 px-3 bg-red-50 border-l-4 border-red-500 rounded">
+                  <div className="flex items-center justify-between py-2 px-3 bg-blue-50 border-l-4 border-blue-500 rounded">
                     <div>
                       <div className="font-medium text-gray-800">JEE Main Registration</div>
-                      <div className="text-red-600">Deadline: Dec 30, 2024</div>
+                      <div className="text-blue-600">Deadline: Dec 30, 2024</div>
                     </div>
-                    <div className="text-red-600 text-xs bg-red-100 px-2 py-1 rounded-full font-medium">
+                    <div className="text-blue-600 text-xs bg-blue-100 px-2 py-1 rounded-full font-medium">
                       5 days left
                     </div>
                   </div>
-                  <div className="flex items-center justify-between py-2 px-3 bg-orange-50 border-l-4 border-orange-500 rounded">
+                  <div className="flex items-center justify-between py-2 px-3 bg-blue-50 border-l-4 border-blue-500 rounded">
                     <div>
                       <div className="font-medium text-gray-800">NEET Application</div>
-                      <div className="text-orange-600">Opens: Jan 15, 2025</div>
+                      <div className="text-blue-600">Opens: Jan 15, 2025</div>
                     </div>
-                    <div className="text-orange-600 text-xs bg-orange-100 px-2 py-1 rounded-full font-medium">
+                    <div className="text-blue-600 text-xs bg-blue-100 px-2 py-1 rounded-full font-medium">
                       21 days
                     </div>
                   </div>
@@ -494,8 +494,8 @@ export default function Home() {
                 <div className="text-gray-600 text-xs">Personalized dates</div>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
                 </div>
@@ -503,8 +503,8 @@ export default function Home() {
                 <div className="text-gray-600 text-xs">Never miss deadlines</div>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
-                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 012-2h2a2 2 012 2v14a2 2 01-2 2h-2a2 2 01-2-2z" />
                   </svg>
                 </div>
@@ -512,8 +512,8 @@ export default function Home() {
                 <div className="text-gray-600 text-xs">Application status</div>
               </div>
               <div className="bg-gray-50 rounded-lg p-4">
-                <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>

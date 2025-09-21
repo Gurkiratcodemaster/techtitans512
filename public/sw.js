@@ -1,20 +1,15 @@
-// Service Worker for Career Choice App
-// Provides offline functionality and low network support
 
 const CACHE_NAME = 'career-choice-v1';
 const STATIC_CACHE = 'career-choice-static-v1';
 const DYNAMIC_CACHE = 'career-choice-dynamic-v1';
 
-// Essential files to cache for offline functionality
 const ESSENTIAL_FILES = [
   '/',
   '/chatbot',
   '/manifest.json',
   '/images/student1.jpg',
-  // Add other critical assets
 ];
 
-// AI responses cache for offline career guidance
 const OFFLINE_RESPONSES = {
   'engineering': {
     keywords: ['engineering', 'btech', 'jee', 'engineer'],
@@ -110,7 +105,6 @@ Try asking: "Tell me about engineering" or "How to prepare for NEET"
 ⚠️ **Limited Offline Mode:** For personalized advice and latest information, please connect to the internet.`
 };
 
-// Install Service Worker
 self.addEventListener('install', (event) => {
   console.log('Service Worker installing...');
   
@@ -128,7 +122,6 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate Service Worker
 self.addEventListener('activate', (event) => {
   console.log('Service Worker activating...');
   
@@ -149,17 +142,14 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Network-first strategy with offline fallback
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   
-  // Handle API requests specially
   if (request.url.includes('/api/chat')) {
     event.respondWith(handleChatRequest(request));
     return;
   }
   
-  // Handle other requests with cache-first strategy for static assets
   event.respondWith(
     caches.match(request)
       .then((cachedResponse) => {
@@ -169,7 +159,6 @@ self.addEventListener('fetch', (event) => {
         
         return fetch(request)
           .then((networkResponse) => {
-            // Cache successful responses
             if (networkResponse.status === 200) {
               const responseClone = networkResponse.clone();
               caches.open(DYNAMIC_CACHE)
@@ -180,7 +169,6 @@ self.addEventListener('fetch', (event) => {
             return networkResponse;
           })
           .catch(() => {
-            // Return offline page or cached version
             if (request.destination === 'document') {
               return caches.match('/') || new Response('Offline - Please check your connection');
             }
@@ -189,10 +177,8 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Handle chat requests with offline intelligence
 async function handleChatRequest(request) {
   try {
-    // Try network first
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
       return networkResponse;
@@ -200,13 +186,11 @@ async function handleChatRequest(request) {
     throw new Error('Network request failed');
     
   } catch (error) {
-    // Offline fallback - parse the request and provide intelligent response
     try {
       const requestData = await request.json();
       const lastMessage = requestData.messages[requestData.messages.length - 1];
       const query = lastMessage?.content?.toLowerCase() || '';
       
-      // Find matching offline response
       let response = OFFLINE_RESPONSES.default;
       
       for (const [category, data] of Object.entries(OFFLINE_RESPONSES)) {
@@ -233,7 +217,6 @@ async function handleChatRequest(request) {
   }
 }
 
-// Background sync for when connection returns
 self.addEventListener('sync', (event) => {
   if (event.tag === 'career-guidance-sync') {
     event.waitUntil(syncPendingMessages());
@@ -242,5 +225,4 @@ self.addEventListener('sync', (event) => {
 
 async function syncPendingMessages() {
   console.log('Syncing pending messages when online...');
-  // Implementation for syncing messages when connection returns
 }

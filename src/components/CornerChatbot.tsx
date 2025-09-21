@@ -132,10 +132,12 @@ export default function CornerChatbot({ isOpen, onClose, initialMessage, context
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed bottom-4 right-4 w-[450px] h-[600px] max-w-[90vw] max-h-[80vh] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col transform transition-all duration-500 ease-out animate-in slide-in-from-bottom-8 scale-100 opacity-100">
+    <div className={`fixed bottom-20 right-6 w-[450px] h-[600px] max-w-[90vw] max-h-[80vh] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col transform transition-all duration-300 ease-out ${
+      isOpen 
+        ? 'translate-y-0 opacity-100 scale-100 pointer-events-auto' 
+        : 'translate-y-4 opacity-0 scale-95 pointer-events-none'
+    }`}>
       {/* Header */}
       <div className="flex items-center justify-between p-5 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-2xl">
         <div className="flex items-center space-x-3">

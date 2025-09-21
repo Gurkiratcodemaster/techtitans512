@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import { CareerNode, CareerLink, filterDataByDegrees } from "@/data/careerPathData";
+import { CareerPathService, CareerNode, CareerLink, CareerPathData } from "@/lib/supabase";
 
 interface CareerPathVisualizationProps {
   recommendedDegrees: string[];
@@ -12,6 +12,29 @@ const CareerPathVisualization: React.FC<CareerPathVisualizationProps> = ({ recom
   const [selectedNode, setSelectedNode] = useState<CareerNode | null>(null);
   const [hoveredNode, setHoveredNode] = useState<CareerNode | null>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [careerData, setCareerData] = useState<CareerPathData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Load data from Supabase
+  useEffect(() => {
+    async function loadCareerData() {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const data = await CareerPathService.filterDataByDegrees(recommendedDegrees);
+        setCareerData(data);
+      } catch (err) {
+        console.error('Error loading career data:', err);
+        setError('Failed to load career path data. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadCareerData();
+  }, [recommendedDegrees]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -30,12 +53,12 @@ const CareerPathVisualization: React.FC<CareerPathVisualizationProps> = ({ recom
   }, []);
 
   useEffect(() => {
-    if (!svgRef.current) return;
+    if (!svgRef.current || !careerData || loading) return;
 
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const data = filterDataByDegrees(recommendedDegrees);
+    const data = careerData;
     const { width, height } = dimensions;
 
     // Set up the simulation
@@ -216,13 +239,32 @@ const CareerPathVisualization: React.FC<CareerPathVisualizationProps> = ({ recom
       event.subject.fy = null;
     }
 
-  }, [dimensions, recommendedDegrees, selectedNode]);
+  }, [dimensions, careerData, loading, selectedNode]);
+
+  if (error) {
+    return (
+      <div className="w-full">
+        <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
+          <div className="text-center text-red-600">
+            <p className="text-lg font-semibold mb-2">⚠️ Error Loading Career Data</p>
+            <p>{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
       <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
         <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Interactive Career Path Explorer
+          Interactive Career Path Explorer {loading && '(Loading...)'}
         </h3>
         
         {/* Legend */}

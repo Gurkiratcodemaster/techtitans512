@@ -2,147 +2,64 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 
+// College interface matching Prisma model
 interface College {
   id: string;
   name: string;
   location: string;
   state: string;
-  type: "Government" | "Private" | "Deemed";
+  city: string;
+  type: 'ENGINEERING' | 'MEDICAL' | 'BUSINESS' | 'ARTS' | 'SCIENCE' | 'LAW' | 'MIXED' | 'TECHNICAL';
+  rating?: number;
+  established?: number;
   courses: string[];
-  cutoff: {
-    general: number;
-    obc: number;
-    sc: number;
-    st: number;
-  };
-  facilities: string[];
-  mediumOfInstruction: string[];
-  website: string;
-  fees: {
-    tuition: string;
-    hostel: string;
-  };
+  fees?: string;
+  placement?: string;
+  website?: string;
+  phone?: string;
+  email?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function CollegesPage() {
   const [loaded, setLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
   const [filteredColleges, setFilteredColleges] = useState<College[]>([]);
+  const [allColleges, setAllColleges] = useState<College[]>([]);
 
-  // Sample college data with focus on Jammu and Kashmir colleges
-  const collegesData: College[] = [
-    {
-      id: "1",
-      name: "University of Jammu",
-      location: "Jammu",
-      state: "Jammu and Kashmir",
-      type: "Government",
-      courses: ["B.A.", "B.Sc.", "B.Com.", "BBA", "BCA", "M.A.", "M.Sc.", "MBA"],
-      cutoff: { general: 85, obc: 80, sc: 75, st: 70 },
-      facilities: ["Hostel", "Library", "Laboratory", "Internet", "Sports Complex", "Canteen"],
-      mediumOfInstruction: ["English", "Hindi"],
-      website: "https://jammuuniversity.ac.in",
-      fees: { tuition: "₹15,000/year", hostel: "₹25,000/year" }
-    },
-    {
-      id: "2", 
-      name: "Government College for Women, Jammu",
-      location: "Jammu",
-      state: "Jammu and Kashmir",
-      type: "Government",
-      courses: ["B.A.", "B.Sc.", "B.Com.", "M.A.", "M.Sc."],
-      cutoff: { general: 80, obc: 75, sc: 70, st: 65 },
-      facilities: ["Library", "Laboratory", "Internet", "Computer Lab", "Canteen"],
-      mediumOfInstruction: ["English"],
-      website: "https://gcwjammu.ac.in",
-      fees: { tuition: "₹12,000/year", hostel: "Not Available" }
-    },
-    {
-      id: "3",
-      name: "Government Medical College, Jammu",
-      location: "Jammu",
-      state: "Jammu and Kashmir",
-      type: "Government",
-      courses: ["MBBS", "MD", "MS"],
-      cutoff: { general: 600, obc: 580, sc: 550, st: 530 },
-      facilities: ["Hostel", "Library", "Laboratory", "Hospital", "Internet", "Medical Equipment"],
-      mediumOfInstruction: ["English"],
-      website: "https://gmcjammu.nic.in",
-      fees: { tuition: "₹50,000/year", hostel: "₹30,000/year" }
-    },
-    {
-      id: "4",
-      name: "Shri Mata Vaishno Devi University",
-      location: "Katra",
-      state: "Jammu and Kashmir",
-      type: "Government",
-      courses: ["B.Tech", "MBA", "M.Tech", "BCA", "MCA", "B.Sc.", "M.Sc."],
-      cutoff: { general: 75, obc: 70, sc: 65, st: 60 },
-      facilities: ["Hostel", "Library", "Laboratory", "Internet", "Sports Complex", "Cafeteria"],
-      mediumOfInstruction: ["English"],
-      website: "https://smvdu.ac.in",
-      fees: { tuition: "₹80,000/year", hostel: "₹40,000/year" }
-    },
-    {
-      id: "5",
-      name: "Central University of Kashmir",
-      location: "Ganderbal",
-      state: "Jammu and Kashmir",
-      type: "Government",
-      courses: ["B.A.", "B.Sc.", "B.Tech", "MBA", "M.A.", "M.Sc.", "Ph.D."],
-      cutoff: { general: 82, obc: 77, sc: 72, st: 67 },
-      facilities: ["Hostel", "Library", "Laboratory", "Internet", "Sports", "Medical Center"],
-      mediumOfInstruction: ["English", "Urdu"],
-      website: "https://cukashmir.ac.in",
-      fees: { tuition: "₹20,000/year", hostel: "₹35,000/year" }
-    },
-    {
-      id: "6",
-      name: "Delhi University",
-      location: "Delhi",
-      state: "Delhi",
-      type: "Government",
-      courses: ["B.A.", "B.Sc.", "B.Com.", "BBA", "MBA", "M.A.", "M.Sc."],
-      cutoff: { general: 95, obc: 90, sc: 85, st: 80 },
-      facilities: ["Hostel", "Library", "Laboratory", "Internet", "Sports Complex", "Multiple Campuses"],
-      mediumOfInstruction: ["English", "Hindi"],
-      website: "https://du.ac.in",
-      fees: { tuition: "₹25,000/year", hostel: "₹45,000/year" }
-    },
-    {
-      id: "7",
-      name: "Jawaharlal Nehru University",
-      location: "Delhi",
-      state: "Delhi", 
-      type: "Government",
-      courses: ["B.A.", "M.A.", "M.Phil", "Ph.D.", "MBA"],
-      cutoff: { general: 90, obc: 85, sc: 80, st: 75 },
-      facilities: ["Hostel", "Library", "Laboratory", "Internet", "Cultural Center"],
-      mediumOfInstruction: ["English"],
-      website: "https://jnu.ac.in",
-      fees: { tuition: "₹20,000/year", hostel: "₹40,000/year" }
-    },
-    {
-      id: "8",
-      name: "Banaras Hindu University",
-      location: "Varanasi",
-      state: "Uttar Pradesh",
-      type: "Government",
-      courses: ["B.A.", "B.Sc.", "B.Tech", "MBBS", "MBA", "M.A.", "M.Sc."],
-      cutoff: { general: 88, obc: 83, sc: 78, st: 73 },
-      facilities: ["Hostel", "Library", "Laboratory", "Internet", "Hospital", "Sports"],
-      mediumOfInstruction: ["English", "Hindi"],
-      website: "https://bhu.ac.in",
-      fees: { tuition: "₹30,000/year", hostel: "₹35,000/year" }
+  // Load colleges from API
+  useEffect(() => {
+    async function loadColleges() {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch('/api/colleges');
+        if (!response.ok) {
+          throw new Error('Failed to fetch colleges');
+        }
+        const data = await response.json();
+        setAllColleges(data.colleges);
+      } catch (err) {
+        console.error('Error loading colleges:', err);
+        setError('Failed to load colleges. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     }
-  ];
 
-  const states = [...new Set(collegesData.map(college => college.state))].sort();
-  const types = [...new Set(collegesData.map(college => college.type))];
-  const allCourses = [...new Set(collegesData.flatMap(college => college.courses))].sort();
+    loadColleges();
+  }, []);
+
+  // Dynamic filter options based on loaded data
+  const states = [...new Set(allColleges.map(college => college.state))].sort();
+  const types = [...new Set(allColleges.map(college => college.type))];
+  const allCourses = [...new Set(allColleges.flatMap(college => college.courses))].sort();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 100);
@@ -150,7 +67,7 @@ export default function CollegesPage() {
   }, []);
 
   useEffect(() => {
-    let filtered = collegesData;
+    let filtered = allColleges;
 
     if (searchTerm) {
       filtered = filtered.filter(college => 
@@ -261,7 +178,7 @@ export default function CollegesPage() {
 
             <div className="flex justify-between items-center">
               <p className="text-sm text-gray-600">
-                Showing {filteredColleges.length} of {collegesData.length} colleges
+                Showing {filteredColleges.length} of {allColleges.length} colleges
               </p>
               <button
                 onClick={resetFilters}
@@ -294,9 +211,13 @@ export default function CollegesPage() {
                           {college.location}, {college.state}
                         </div>
                         <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                          college.type === 'Government' ? 'bg-green-100 text-green-800' :
-                          college.type === 'Private' ? 'bg-blue-100 text-blue-800' :
-                          'bg-purple-100 text-purple-800'
+                          college.type === 'ENGINEERING' ? 'bg-blue-100 text-blue-800' :
+                          college.type === 'MEDICAL' ? 'bg-red-100 text-red-800' :
+                          college.type === 'BUSINESS' ? 'bg-green-100 text-green-800' :
+                          college.type === 'ARTS' ? 'bg-purple-100 text-purple-800' :
+                          college.type === 'SCIENCE' ? 'bg-indigo-100 text-indigo-800' :
+                          college.type === 'LAW' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
                         }`}>
                           {college.type}
                         </span>
@@ -330,46 +251,63 @@ export default function CollegesPage() {
                         </div>
                       </div>
 
-                      <div>
-                        <h4 className="font-semibold text-gray-800 mb-2">Cut-off Percentile</h4>
-                        <div className="text-sm text-gray-600">
-                          <div>General: {college.cutoff.general}%</div>
-                          <div>OBC: {college.cutoff.obc}%</div>
-                          <div>SC/ST: {college.cutoff.sc}%/{college.cutoff.st}%</div>
+                      {college.rating && (
+                        <div>
+                          <h4 className="font-semibold text-gray-800 mb-2">Rating</h4>
+                          <div className="text-sm text-gray-600">
+                            <div>{college.rating}/10</div>
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       <div>
                         <h4 className="font-semibold text-gray-800 mb-2">Fees</h4>
                         <div className="text-sm text-gray-600">
-                          <div>Tuition: {college.fees.tuition}</div>
-                          <div>Hostel: {college.fees.hostel}</div>
+                          <div>{college.fees || 'Contact for details'}</div>
                         </div>
                       </div>
+
+                      {college.placement && (
+                        <div>
+                          <h4 className="font-semibold text-gray-800 mb-2">Placement</h4>
+                          <div className="text-sm text-gray-600">
+                            <div>{college.placement}</div>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-semibold text-gray-800 mb-2">Facilities</h4>
-                        <div className="flex flex-wrap gap-1">
-                          {college.facilities.map(facility => (
-                            <span key={facility} className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs">
-                              {facility}
-                            </span>
-                          ))}
+                      {college.established && (
+                        <div>
+                          <h4 className="font-semibold text-gray-800 mb-2">Established</h4>
+                          <div className="text-sm text-gray-600">{college.established}</div>
                         </div>
-                      </div>
+                      )}
 
-                      <div>
-                        <h4 className="font-semibold text-gray-800 mb-2">Medium of Instruction</h4>
-                        <div className="flex flex-wrap gap-1">
-                          {college.mediumOfInstruction.map(medium => (
-                            <span key={medium} className="px-2 py-1 bg-green-50 text-green-700 rounded text-xs">
-                              {medium}
-                            </span>
-                          ))}
+                      {college.website && (
+                        <div>
+                          <h4 className="font-semibold text-gray-800 mb-2">Website</h4>
+                          <a href={college.website} target="_blank" rel="noopener noreferrer" 
+                             className="text-blue-600 hover:text-blue-800 text-sm">
+                            Visit Website
+                          </a>
                         </div>
-                      </div>
+                      )}
+
+                      {college.phone && (
+                        <div>
+                          <h4 className="font-semibold text-gray-800 mb-2">Phone</h4>
+                          <div className="text-sm text-gray-600">{college.phone}</div>
+                        </div>
+                      )}
+
+                      {college.email && (
+                        <div>
+                          <h4 className="font-semibold text-gray-800 mb-2">Email</h4>
+                          <div className="text-sm text-gray-600">{college.email}</div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

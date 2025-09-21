@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from 'react';
 import { useOnlineStatus } from './OfflineSupport';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Message {
   id: string;
@@ -11,18 +12,44 @@ interface Message {
 
 export default function Chatbot() {
   const isOnline = useOnlineStatus();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      content: 'Hi! I\'m your AI career guidance assistant. Ask me about engineering, medical, business careers, entrance exams, or salary information!',
+      content: 'Hi! I\'m your personalized AI career guidance assistant. I have access to your profile information to provide tailored advice about engineering, medical, business careers, entrance exams, and salary information!',
       timestamp: new Date()
     }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Load user profile for personalized responses
+    if (user) {
+      try {
+        const profileData = localStorage.getItem('userProfile');
+        if (profileData) {
+          const profile = JSON.parse(profileData);
+          if (profile.userId === user.uid) {
+            setUserProfile(profile);
+            // Update initial message with personalized greeting
+            setMessages([{
+              id: '1',
+              role: 'assistant',
+              content: `Hi ${profile.fullName}! I'm your personalized AI career guidance assistant. I know you're interested in ${profile.careerInterests.slice(0, 2).join(' and ')}, currently in ${profile.currentClass}, and I'm here to help with tailored advice about careers, entrance exams, and educational paths!`,
+              timestamp: new Date()
+            }]);
+          }
+        }
+      } catch (error) {
+        console.log('No user profile found');
+      }
+    }
+  }, [user]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,6 +76,23 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
+      // Prepare user context for personalized responses
+      let userContext = '';
+      if (userProfile) {
+        userContext = `User Profile Context: 
+        - Name: ${userProfile.fullName}
+        - Education: ${userProfile.currentEducation}, ${userProfile.currentClass}
+        - Location: ${userProfile.location}
+        - Career Interests: ${userProfile.careerInterests.join(', ')}
+        - Current Subjects: ${userProfile.currentSubjects.join(', ')}
+        - Strengths: ${userProfile.strengths.join(', ')}
+        - Academic Goals: ${userProfile.academicGoals}
+        - Study Mode Preference: ${userProfile.preferredStudyMode}
+        
+        Please provide personalized career guidance based on this profile information.
+        `;
+      }
+
       // Check if we have OpenAI configured for streaming
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -57,9 +101,11 @@ export default function Chatbot() {
         },
         body: JSON.stringify({
           messages: [
+            ...(userContext ? [{ role: 'system', content: userContext }] : []),
             ...messages.map(m => ({ role: m.role, content: m.content })),
             { role: 'user', content: currentInput }
-          ]
+          ],
+          userProfile: userProfile // Include profile data
         }),
       });
 

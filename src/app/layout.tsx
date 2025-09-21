@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
+import { Poppins } from 'next/font/google';
+
+const poppins = Poppins({
+  weight: ['300', '400', '500', '600', '700', '800'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-poppins'
+});
 
 export const metadata: Metadata = {
   title: "Career Choice",
@@ -34,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${poppins.variable} font-sans`}>
         {/* Delegate rendering of Navbar & children to ClientLayout */}
         <ClientLayout>{children}</ClientLayout>
       </body>

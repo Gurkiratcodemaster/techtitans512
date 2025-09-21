@@ -59,11 +59,22 @@ export default function LoginPage() {
         }
         
         await createUserWithEmailAndPassword(auth, email, password);
-        // Redirect to profile setup after signup
-        router.push("/profile-setup");
+        // Redirect to onboarding for new users
+        router.push("/onboarding");
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        router.push("/");
+        // Check if user has completed onboarding
+        const existingProfile = localStorage.getItem('userProfile');
+        if (existingProfile) {
+          const profile = JSON.parse(existingProfile);
+          if (profile.onboardingCompleted) {
+            router.push("/");
+          } else {
+            router.push("/onboarding");
+          }
+        } else {
+          router.push("/onboarding");
+        }
       }
     } catch (error: any) {
       setError(error.message);
@@ -77,11 +88,20 @@ export default function LoginPage() {
     const provider = new GoogleAuthProvider();
 
     try {
-      await signInWithPopup(auth, provider);
-      if (isSignup) {
-        router.push("/profile-setup");
+      const result = await signInWithPopup(auth, provider);
+      
+      // Check if this is a new user (Google signup) or existing user
+      const existingProfile = localStorage.getItem('userProfile');
+      if (existingProfile) {
+        const profile = JSON.parse(existingProfile);
+        if (profile.userId === result.user.uid && profile.onboardingCompleted) {
+          router.push("/");
+        } else {
+          router.push("/onboarding");
+        }
       } else {
-        router.push("/");
+        // New user or no profile found - go to onboarding
+        router.push("/onboarding");
       }
     } catch (error: any) {
       setError(error.message);

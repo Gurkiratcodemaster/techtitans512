@@ -1,0 +1,380 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Profile Model - Main user information collected during onboarding
+model UserProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique // Firebase Auth UID
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Personal Information
+  fullName  String
+  age       Int
+  gender    Gender
+  location  String
+  
+  // Educational Information
+  currentEducation             EducationLevel
+  currentClass                String
+  previousAcademicPerformance AcademicPerformance?
+  currentSubjects             String[] // Array of subjects
+  
+  // Career Interests & Goals
+  careerInterests   CareerField[] // Array of career fields
+  preferredStudyMode StudyMode
+  academicGoals     String
+  
+  // Personal Attributes
+  strengths   String[] // Array of strengths
+  challenges  String[] // Array of challenges
+  
+  // Family Context
+  parentOccupation String?
+  familyIncome     IncomeRange?
+  
+  // Onboarding Status
+  onboardingCompleted Boolean @default(false)
+  
+  // Relations
+  userSettings UserSettings?
+  quizResults  QuizResult[]
+  chatSessions ChatSession[]
+  recommendations AIRecommendation[]
+
+  @@map("user_profiles")
+}
+
+// User Settings Model - App preferences and configurations
+model UserSettings {
+  id     String @id @default(cuid())
+  userId String @unique
+  
+  // Notification Preferences
+  emailNotifications    Boolean @default(true)
+  pushNotifications     Boolean @default(false)
+  careerUpdates        Boolean @default(true)
+  examAlerts           Boolean @default(true)
+  newsletter           Boolean @default(false)
+  
+  // Privacy Settings
+  profileVisibility ProfileVisibility @default(PUBLIC)
+  showEmail         Boolean           @default(false)
+  showProgress      Boolean           @default(true)
+  
+  // App Preferences
+  theme           AppTheme   @default(LIGHT)
+  language        Language   @default(ENGLISH)
+  timezone        String     @default("Asia/Kolkata")
+  careerField     CareerField @default(ENGINEERING_TECHNOLOGY)
+  educationLevel  EducationLevel @default(HIGH_SCHOOL)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  userProfile UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+// Quiz Results Model - Aptitude test and assessment results
+model QuizResult {
+  id             String   @id @default(cuid())
+  userId         String
+  quizType       QuizType
+  completedAt    DateTime @default(now())
+  
+  // Overall Scores
+  totalScore         Int
+  maxPossibleScore   Int
+  overallPercentage  Float
+  
+  // Category-wise Scores
+  logicalScore      Int?
+  logicalMax        Int?
+  mathematicalScore Int?
+  mathematicalMax   Int?
+  verbalScore       Int?
+  verbalMax         Int?
+  spatialScore      Int?
+  spatialMax        Int?
+  technicalScore    Int?
+  technicalMax      Int?
+  
+  // Time Taken
+  timeSpentMinutes Int?
+  
+  // Relations
+  userProfile UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("quiz_results")
+}
+
+// AI Recommendations Model - Personalized recommendations generated
+model AIRecommendation {
+  id          String               @id @default(cuid())
+  userId      String
+  category    RecommendationCategory
+  title       String
+  description String
+  reason      String
+  priority    Priority
+  actionUrl   String?
+  details     String[] // Array of key details
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  
+  // Relations
+  userProfile UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("ai_recommendations")
+}
+
+// Chat Sessions Model - AI chatbot conversations
+model ChatSession {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String   @default("Chat Session")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  
+  // Relations
+  userProfile UserProfile  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  messages    ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+// Chat Messages Model - Individual messages in chat sessions
+model ChatMessage {
+  id          String      @id @default(cuid())
+  sessionId   String
+  role        MessageRole
+  content     String
+  timestamp   DateTime    @default(now())
+  
+  // Message metadata
+  isStreaming Boolean @default(false)
+  hasContext  Boolean @default(false)
+  
+  // Relations
+  chatSession ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
+
+// College Information Model - Database of colleges for recommendations
+model College {
+  id          String   @id @default(cuid())
+  name        String
+  location    String
+  state       String
+  city        String
+  type        CollegeType
+  rating      Float?
+  established Int?
+  
+  // Academic Information
+  courses     String[] // Array of courses offered
+  fees        String?
+  placement   String?
+  
+  // Contact Information
+  website     String?
+  phone       String?
+  email       String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("colleges")
+}
+
+// Course Information Model - Database of courses for recommendations
+model Course {
+  id          String      @id @default(cuid())
+  name        String
+  description String
+  category    CareerField
+  duration    String
+  level       EducationLevel
+  
+  // Course Details
+  eligibility String[]
+  subjects    String[]
+  careerPaths String[]
+  
+  // Exam Information
+  entranceExams String[]
+  avgFees       String?
+  avgSalary     String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("courses")
+}
+
+// Career Information Model - Database of career paths
+model Career {
+  id          String      @id @default(cuid())
+  title       String
+  field       CareerField
+  description String
+  
+  // Career Details
+  requiredSkills     String[]
+  educationRequired  String[]
+  avgStartingSalary  String?
+  avgMidSalary      String?
+  avgSeniorSalary   String?
+  
+  // Growth Information
+  growthRate        String?
+  jobMarket         String?
+  futureProspects   String?
+  
+  // Work Environment
+  workMode          String[] // Remote, Office, Hybrid
+  industryDemand    String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("careers")
+}
+
+// Enums for better type safety and data consistency
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum EducationLevel {
+  HIGH_SCHOOL
+  SENIOR_SECONDARY
+  UNDERGRADUATE
+  POSTGRADUATE
+  DIPLOMA
+  PROFESSIONAL
+}
+
+enum AcademicPerformance {
+  EXCELLENT      // 90%+ or A grade
+  GOOD          // 75-89% or B grade
+  AVERAGE       // 60-74% or C grade
+  BELOW_AVERAGE // 50-59%
+  STRUGGLING    // Below 50%
+}
+
+enum CareerField {
+  ENGINEERING_TECHNOLOGY
+  MEDICAL_HEALTHCARE
+  BUSINESS_MANAGEMENT
+  SCIENCE_RESEARCH
+  ARTS_HUMANITIES
+  LAW_LEGAL
+  EDUCATION_TEACHING
+  CREATIVE_DESIGN
+  MEDIA_JOURNALISM
+  SPORTS_FITNESS
+  AGRICULTURE
+  DEFENSE_MILITARY
+  AVIATION
+  FASHION_BEAUTY
+  HOSPITALITY_TOURISM
+  BANKING_FINANCE
+  GOVERNMENT_SERVICES
+  SOCIAL_WORK
+}
+
+enum StudyMode {
+  SELF_STUDY
+  CLASSROOM
+  ONLINE
+  HYBRID
+  TUTORING
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  PRIVATE
+  FRIENDS
+}
+
+enum AppTheme {
+  LIGHT
+  DARK
+  AUTO
+}
+
+enum Language {
+  ENGLISH
+  HINDI
+  BENGALI
+  TAMIL
+  TELUGU
+}
+
+enum IncomeRange {
+  BELOW_3     // Below ₹3 Lakhs
+  RANGE_3_6   // ₹3-6 Lakhs
+  RANGE_6_12  // ₹6-12 Lakhs
+  RANGE_12_25 // ₹12-25 Lakhs
+  ABOVE_25    // Above ₹25 Lakhs
+}
+
+enum QuizType {
+  APTITUDE_TEST
+  CAREER_ASSESSMENT
+  PERSONALITY_TEST
+  SKILL_ASSESSMENT
+}
+
+enum RecommendationCategory {
+  COURSE
+  COLLEGE
+  CAREER
+  STUDY_MATERIAL
+  EXAM_PREPARATION
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum CollegeType {
+  ENGINEERING
+  MEDICAL
+  BUSINESS
+  ARTS
+  SCIENCE
+  LAW
+  MIXED
+  TECHNICAL
+}

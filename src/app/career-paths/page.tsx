@@ -115,7 +115,14 @@ export default function CareerPathsPage() {
     const margin = { top: 20, right: 20, bottom: 20, left: 20 };
 
     // Create nodes and links data
-    const nodes = [
+    type SankeyNode = {
+      id: string;
+      category: string;
+      x?: number;
+      y?: number;
+    };
+
+    const nodes: SankeyNode[] = [
       { id: selectedDegree.degree, category: "degree" },
       ...selectedDegree.jobs.map(job => ({ id: job, category: "job" })),
       ...selectedDegree.higherStudies.map(study => ({ id: study, category: "study" }))
@@ -169,10 +176,10 @@ export default function CareerPathsPage() {
         const path = linkGroup.append("path")
           .attr("class", "link")
           .attr("d", () => {
-            const x1 = sourceNode.x + 100;
-            const y1 = sourceNode.y;
-            const x2 = targetNode.x - 10;
-            const y2 = targetNode.y;
+            const x1 = (sourceNode.x ?? 0) + 100;
+            const y1 = sourceNode.y ?? 0;
+            const x2 = (targetNode.x ?? 0) - 10;
+            const y2 = targetNode.y ?? 0;
             const cx = (x1 + x2) / 2;
             
             return `M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`;
