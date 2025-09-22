@@ -79,21 +79,21 @@ export default function Footer() {
           <div className={`space-y-4 transition-all duration-500 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '300ms' }}>
             <h4 className="text-lg font-semibold text-white">Our Services</h4>
             <div className="flex flex-col space-y-2">
-              <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm hover:translate-x-1 transform">
+              <Link href="/colleges" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm hover:translate-x-1 transform">
+                College Directory
+              </Link>
+              <Link href="/quiz/class10" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm hover:translate-x-1 transform">
                 Career Assessment
-              </a>
-              <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm hover:translate-x-1 transform">
-                Skill Development
-              </a>
-              <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm hover:translate-x-1 transform">
-                Interview Preparation
-              </a>
-              <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm hover:translate-x-1 transform">
-                Resume Building
-              </a>
-              <a href="#" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm hover:translate-x-1 transform">
-                Industry Insights
-              </a>
+              </Link>
+              <Link href="/study-materials" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm hover:translate-x-1 transform">
+                Study Materials
+              </Link>
+              <Link href="/chatbot" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm hover:translate-x-1 transform">
+                AI Career Counselor
+              </Link>
+              <Link href="/about" className="text-gray-300 hover:text-blue-400 transition-colors duration-300 text-sm hover:translate-x-1 transform">
+                About Us
+              </Link>
             </div>
           </div>
 
@@ -138,23 +138,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Newsletter Subscription */}
-        <div className={`mt-12 pt-8 border-t border-gray-600 transition-all duration-500 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '500ms' }}>
-          <div className="max-w-md mx-auto text-center">
-            <h4 className="text-lg font-semibold text-white mb-4">Stay Updated</h4>
-            <p className="text-gray-300 text-sm mb-4">Subscribe to our newsletter for career tips and updates</p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input 
-                type="email" 
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"
-              />
-              <button className="px-6 py-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105">
-                Subscribe
-              </button>
-            </div>
-          </div>
-        </div>
+
 
         {/* Bottom Bar */}
         <div className={`mt-12 pt-8 border-t border-gray-600 flex flex-col md:flex-row justify-between items-center transition-all duration-500 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`} style={{ transitionDelay: '600ms' }}>

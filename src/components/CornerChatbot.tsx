@@ -168,12 +168,15 @@ export default function CornerChatbot({ isOpen, onClose, initialMessage, context
                   : 'bg-white text-gray-800 shadow-sm border'
               }`}
             >
-              <p className="whitespace-pre-wrap leading-relaxed text-sm">{message.content}</p>
-              <div className={`text-xs mt-2 opacity-70 ${
-                message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
-              }`}>
-                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </div>
+              <div>
+  <p className="whitespace-pre-wrap leading-relaxed text-sm">{message.content}</p>
+  <div className={`text-xs mt-2 opacity-70 ${
+    message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
+  }`}>
+    {/* Timestamp will be fixed in the next step */}
+    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+  </div>
+</div>
             </div>
           </div>
         ))}

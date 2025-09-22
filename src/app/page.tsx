@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { openChatbot } from "@/components/chatbot";
 import CornerChatbot from "@/components/CornerChatbot";
+import HeroSection from "@/components/HeroSection";
 import dynamic from 'next/dynamic';
 
 // Dynamically import the CareerFlowDiagram component
@@ -58,29 +59,20 @@ export default function Home() {
   }, [motivationalQuotes.length]);
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
       <div className="pt-20 px-8">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
-          <div className={`text-center mb-16 transform transition-all duration-500 ease-out ${
-            loaded ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'
-          }`}>
-            <h1 className={`text-5xl font-extrabold text-gray-800 mb-6 transform transition-all duration-400 delay-50 ${
-              loaded ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-            }`}>
-              Welcome to <span className="text-blue-600 text-6xl font-black">Career Choice</span>
-            </h1>
-            <p className={`text-xl text-gray-600 max-w-3xl mx-auto font-medium transform transition-all duration-400 delay-100 ${
-              loaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
-            }`}>
-              Discover your perfect career path with our AI-powered guidance, personalized assessments, and expert recommendations.
-            </p>
-          </div>
+          <HeroSection
+            title="Welcome to Career Choice"
+            subtitle="Discover your perfect career path with our AI-powered guidance, personalized assessments, and expert recommendations."
+            loaded={loaded}
+          />
 
           {/* Feature Cards */}
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             {/* Career Quiz Card */}
-            <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg text-center transform transition-all duration-500 ease-out delay-100 ${
+            <div className={`bg-white rounded-3xl p-8 shadow-lg text-center transform transition-all duration-500 ease-out delay-100 ${
               loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
             }`}>
               <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 transform transition-all duration-400 delay-150 ${
@@ -99,17 +91,17 @@ export default function Home() {
               <div className={`space-y-3 transform transition-all duration-400 delay-300 ${
                 loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
               }`}>
-                <Link href="/quiz/class10" className="block w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105">
+                <Link href="/quiz/class10" className="block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105">
                   Class 10 Assessment
                 </Link>
-                <Link href="/quiz/class12" className="block w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105">
+                <Link href="/quiz/class12" className="block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105">
                   Class 12 Assessment
                 </Link>
               </div>
             </div>
 
             {/* AI Chatbot Card */}
-            <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg text-center transform transition-all duration-500 ease-out delay-150 cursor-pointer ${
+            <div className={`bg-white rounded-3xl p-8 shadow-lg text-center transform transition-all duration-500 ease-out delay-150 cursor-pointer ${
               loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
             }`}>
               <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 transform transition-all duration-400 delay-200 ${
@@ -128,7 +120,7 @@ export default function Home() {
 
               <button
                 onClick={() => setShowCornerChatbot(true)}
-                className={`w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full font-bold transform transition-transform duration-300 ease-in-out hover:scale-105 hover:from-blue-500 hover:to-blue-600 delay-350 ${
+                className={`w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full font-bold transform transition-transform duration-300 ease-in-out hover:scale-105 hover:from-blue-500 hover:to-blue-600 delay-350 ${
                   loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-95'
                 }`}
               >
@@ -137,7 +129,7 @@ export default function Home() {
             </div>
 
             {/* Resources Card */}
-            <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg text-center transform transition-all duration-500 ease-out delay-200 ${
+            <div className={`bg-white rounded-3xl p-8 shadow-lg text-center transform transition-all duration-500 ease-out delay-200 ${
               loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
             }`}>
               <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 transform transition-all duration-400 delay-250 ${
@@ -155,7 +147,7 @@ export default function Home() {
               }`}>Access curated educational content, courses, and materials to develop skills for your chosen career path.</p>
               <Link 
                 href="/study-materials" 
-                className={`block w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105 delay-400 ${
+                className={`block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105 delay-400 ${
                   loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
                 }`}
               >
@@ -165,7 +157,7 @@ export default function Home() {
           </div>
 
           {/* Skills Programs Section */}
-          <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 mb-12 shadow-lg transform transition-all duration-500 ease-out delay-250 ${
+          <div className={`bg-white rounded-3xl p-8 mb-12 shadow-lg transform transition-all duration-500 ease-out delay-250 ${
             loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
           }`}>
             <div className="flex flex-col lg:flex-row items-center gap-8">
@@ -238,7 +230,7 @@ export default function Home() {
                 
                 <Link 
                   href="/skills" 
-                  className={`inline-block px-8 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-300 font-bold transform hover:scale-105 delay-450 ${
+                  className={`inline-block px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-300 font-bold transform hover:scale-105 delay-450 ${
                     loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
                   }`}
                 >
@@ -270,7 +262,7 @@ export default function Home() {
           </div>
 
           {/* How We Help Students Section */}
-          <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 mb-12 shadow-lg transform transition-all duration-500 ease-out delay-300 ${
+          <div className={`bg-white rounded-3xl p-8 mb-12 shadow-lg transform transition-all duration-500 ease-out delay-300 ${
             loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
           }`}>
             <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8 transform transition-all duration-400 delay-350 ${
@@ -367,7 +359,7 @@ export default function Home() {
           </div>
 
           {/* Timeline Tracker Section */}
-          <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-6 mb-8 shadow-lg transform transition-all duration-500 ease-out delay-350 ${
+          <div className={`bg-white rounded-3xl p-6 mb-8 shadow-lg transform transition-all duration-500 ease-out delay-350 ${
             loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
           }`}>
             <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 transform transition-all duration-400 delay-400 ${
@@ -391,7 +383,6 @@ export default function Home() {
                 Get timely notifications for admission deadlines, scholarship applications, entrance test dates, and career opportunities
               </p>
             </div>
-
             <div className="grid md:grid-cols-2 gap-6">
               {/* Subscription Form */}
               <div className={`bg-gray-50 rounded-2xl p-4 transform transition-all duration-400 delay-600 ${
@@ -427,8 +418,8 @@ export default function Home() {
                       <span>Career Events</span>
                     </label>
                   </div>
-                  <button className="w-full px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105">
-                    🔔 Start Timeline Tracking
+                  <button className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105">
+                    Start Timeline Tracking
                   </button>
                 </div>
               </div>
@@ -505,7 +496,7 @@ export default function Home() {
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
                   <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 012-2h2a2 2 012 2v14a2 2 01-2 2h-2a2 2 01-2-2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 01-2 2h-2a2 2 01-2-2z" />
                   </svg>
                 </div>
                 <div className="text-gray-800 font-medium text-sm">Progress Track</div>
@@ -524,7 +515,7 @@ export default function Home() {
           </div>
 
           {/* Motivational Quotes Section */}
-          <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 mb-12 shadow-lg text-center transform transition-all duration-500 ease-out delay-200 ${
+          <div className={`bg-white rounded-3xl p-8 mb-12 shadow-lg text-center transform transition-all duration-500 ease-out delay-200 ${
             loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}>
             <div className="relative h-24 flex items-center justify-center">
@@ -550,32 +541,6 @@ export default function Home() {
                   }`}
                 />
               ))}
-            </div>
-          </div>
-
-          {/* Stats Section */}
-          <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg transform transition-all duration-500 ease-out delay-300 ${
-            loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
-          }`}>
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div className={`transform transition-all duration-400 delay-400 ${
-                loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-              }`}>
-                <div className="text-3xl font-bold text-blue-600 mb-2">10,000+</div>
-                <div className="text-gray-600">Students Guided</div>
-              </div>
-              <div className={`transform transition-all duration-400 delay-450 ${
-                loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-              }`}>
-                <div className="text-3xl font-bold text-blue-600 mb-2">500+</div>
-                <div className="text-gray-600">Career Paths</div>
-              </div>
-              <div className={`transform transition-all duration-400 delay-500 ${
-                loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-              }`}>
-                <div className="text-3xl font-bold text-blue-600 mb-2">95%</div>
-                <div className="text-gray-600">Success Rate</div>
-              </div>
             </div>
           </div>
         </div>

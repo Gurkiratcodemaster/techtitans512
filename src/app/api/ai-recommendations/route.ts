@@ -5,7 +5,6 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     
-    // Validate required fields
     if (!data.userId || !data.recommendations || !Array.isArray(data.recommendations)) {
       return NextResponse.json(
         { error: 'Missing required fields: userId, recommendations (must be an array)' },

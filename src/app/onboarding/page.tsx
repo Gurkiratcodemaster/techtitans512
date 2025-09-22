@@ -496,7 +496,7 @@ export default function OnboardingPage() {
                 <button
                   onClick={handleSubmit}
                   disabled={!isStepValid() || isSubmitting}
-                  className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Saving..." : "Complete Setup"}
                 </button>
