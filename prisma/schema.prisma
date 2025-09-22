@@ -303,6 +303,7 @@ enum CareerField {
   BANKING_FINANCE
   GOVERNMENT_SERVICES
   SOCIAL_WORK
+  OTHER
 }
 
 enum StudyMode {
