@@ -1,5 +1,6 @@
 "use client";
 import { Navbar } from "@/components/navbar";
+import { HeroSection } from "@/components/HeroSection";
 import { useEffect, useState } from "react";
 
 export default function About() {
@@ -12,37 +13,19 @@ export default function About() {
 
     return () => clearTimeout(timer);
   }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
       <Navbar />
-      <div className="pt-20 px-8">
+      
+      <HeroSection 
+        title="About Career Choice"
+        subtitle="Empowering individuals to make informed career decisions through personalized guidance and intelligent recommendations."
+        loaded={loaded}
+      />
+
+      <div className="pt-8 px-8">
         <div className="max-w-4xl mx-auto">
-          <div className={`text-center mb-16 transform transition-all duration-500 ease-out ${loaded ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'
-            }`}>
-            <h1 className={`text-5xl font-bold text-gray-800 mb-6 transform transition-all duration-400 delay-50 ${loaded ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-              }`}>
-              About <span className="text-blue-600">Career Choice</span>
-            </h1>
-            <p className={`text-xl text-gray-600 max-w-3xl mx-auto transform transition-all duration-400 delay-100 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
-              }`}>
-              Empowering individuals to make informed career decisions through personalized guidance and intelligent recommendations.
-            </p>
-          </div>
-
-          <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 mb-12 shadow-lg transform transition-all duration-500 ease-out delay-150 ${loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
-            }`}>
-            <h2 className={`text-3xl font-bold text-gray-800 mb-6 transform transition-all duration-400 delay-200 ${loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
-              }`}>Our Mission</h2>
-            <p className={`text-lg text-gray-700 mb-4 transform transition-all duration-400 delay-250 ${loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
-              }`}>
-              At Career Choice, we believe that everyone deserves to find their perfect career path. Our mission is to bridge the gap between talent and opportunity by providing comprehensive career guidance, skill assessment, and personalized recommendations.
-            </p>
-            <p className={`text-lg text-gray-700 transform transition-all duration-400 delay-300 ${loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
-              }`}>
-              We leverage advanced AI technology and industry insights to help individuals discover careers that align with their skills, interests, and aspirations.
-            </p>
-          </div>
-
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg transform transition-all duration-500 ease-out delay-200 ${loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
               }`}>

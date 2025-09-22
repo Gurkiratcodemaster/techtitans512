@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
+import { HeroSection } from "@/components/HeroSection";
 
 interface SkillProgram {
   id: string;
@@ -176,46 +177,38 @@ export default function SkillsPage() {
 
   const getLevelColor = (level: string) => {
     switch (level) {
-      case "Beginner": return "bg-green-100 text-green-800";
-      case "Intermediate": return "bg-yellow-100 text-yellow-800";  
-      case "Advanced": return "bg-red-100 text-red-800";
+      case "Beginner": return "bg-blue-100 text-blue-800";
+      case "Intermediate": return "bg-gray-100 text-gray-800";  
+      case "Advanced": return "bg-slate-100 text-slate-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
       <Navbar />
       
-      <div className="pt-20 px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className={`text-center mb-8 transform transition-all duration-500 delay-100 ${
-            loaded ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'
-          }`}>
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">
-              Skill Development <span className="text-blue-600">Programs</span>
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Enhance your career prospects with industry-relevant skills and certifications. Perfect for students and working professionals.
-            </p>
-          </div>
+      <HeroSection 
+        title="Skill Development"
+        subtitle="Enhance your career prospects with industry-relevant skills and certifications"
+        loaded={loaded}
+      />
 
-          {/* Call to Action Banner */}
-          <div className={`bg-gradient-to-r from-green-500 to-teal-600 rounded-3xl p-8 mb-8 text-white text-center transform transition-all duration-500 delay-200 ${
-            loaded ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
-          }`}>
-            <h2 className="text-2xl font-bold mb-4">🎓 Just Completed 12th or Have Free Time?</h2>
-            <p className="text-lg mb-6 max-w-2xl mx-auto">
-              Don't let your time go to waste! Invest in yourself with these carefully curated skill programs that will boost your career prospects and make you industry-ready.
-            </p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Call to Action Banner */}
+        <div className={`bg-white rounded-3xl p-8 mb-8 text-gray-800 text-center shadow-lg transform transition-all duration-500 delay-200 ${
+          loaded ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
+        }`}>
+          <h2 className="text-2xl font-bold mb-4">🎓 Just Completed 12th or Have Free Time?</h2>
+          <p className="text-lg mb-6 max-w-2xl mx-auto">
+            Don't let your time go to waste! Invest in yourself with these carefully curated skill programs that will boost your career prospects and make you industry-ready.
+          </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm">
               <div className="flex items-center">
                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
                 Industry Certified
-              </div>
               <div className="flex items-center">
                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -232,7 +225,7 @@ export default function SkillsPage() {
           </div>
 
           {/* Filters */}
-          <div className={`bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 shadow-lg transform transition-all duration-500 delay-300 ${
+          <div className={`bg-white rounded-2xl shadow-lg p-6 mb-8 transform transition-all duration-500 delay-300 ${
             loaded ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
           }`}>
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -283,13 +276,13 @@ export default function SkillsPage() {
             {filteredPrograms.map((program, index) => (
               <div
                 key={program.id}
-                className={`bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg overflow-hidden transform transition-all duration-500 hover:shadow-xl hover:-translate-y-2 ${
+                className={`bg-white rounded-3xl shadow-lg overflow-hidden transform transition-all duration-500 hover:shadow-xl hover:-translate-y-2 ${
                   loaded ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
                 }`}
                 style={{ transitionDelay: `${400 + index * 100}ms` }}
               >
                 {/* Program Image */}
-                <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-500 relative">
+                <div className="h-48 bg-gradient-to-br from-blue-400 to-gray-600 relative">
                   <div className="absolute inset-0 bg-black/20"></div>
                   <div className="absolute top-4 left-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getLevelColor(program.level)}`}>
@@ -363,7 +356,7 @@ export default function SkillsPage() {
                     <ul className="text-xs text-gray-600 space-y-1">
                       {program.outcomes.slice(0, 2).map(outcome => (
                         <li key={outcome} className="flex items-center">
-                          <div className="w-1 h-1 bg-green-500 rounded-full mr-2"></div>
+                          <div className="w-1 h-1 bg-blue-500 rounded-full mr-2"></div>
                           {outcome}
                         </li>
                       ))}

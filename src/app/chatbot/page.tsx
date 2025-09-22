@@ -2,23 +2,20 @@
 "use client";
 import { Navbar } from "@/components/navbar";
 import Chatbot from "@/components/chatbot";
+import { HeroSection } from "@/components/HeroSection";
 
 export default function ChatbotPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
       <Navbar />
       
-      <div className="pt-20 px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-gray-800 mb-4">
-              AI Career <span className="text-blue-600">Guidance</span>
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Get personalized career advice and guidance from our intelligent assistant
-            </p>
-          </div>
+      <HeroSection 
+        title="AI Career Guidance"
+        subtitle="Get personalized career advice and guidance from our intelligent assistant"
+      />
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-4xl mx-auto">
           <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
             <Chatbot />
           </div>

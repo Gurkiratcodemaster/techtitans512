@@ -1,5 +1,6 @@
 "use client";
 import { Navbar } from "@/components/navbar";
+import { HeroSection } from "@/components/HeroSection";
 import { useState, useEffect } from "react";
 
 export default function Contact() {
@@ -56,24 +57,14 @@ export default function Contact() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Navbar />
       
-      <div className="pt-20 px-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Hero Section */}
-          <div className={`text-center mb-16 transform transition-all duration-500 ease-out ${
-            loaded ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'
-          }`}>
-            <h1 className={`text-5xl font-bold text-gray-800 mb-6 transform transition-all duration-400 ${
-              loaded ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-            }`} style={{ transitionDelay: '50ms' }}>
-              Contact <span className="text-blue-600">Us</span>
-            </h1>
-            <p className={`text-xl text-gray-600 max-w-3xl mx-auto transform transition-all duration-400 ${
-              loaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
-            }`} style={{ transitionDelay: '100ms' }}>
-              Have questions about your career journey? We're here to help you navigate your path to success.
-            </p>
-          </div>
+      <HeroSection 
+        title="Contact Us"
+        subtitle="Have questions about your career journey? We're here to help you navigate your path to success."
+        loaded={loaded}
+      />
 
+      <div className="pt-8 px-8">
+        <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg transform transition-all duration-500 ease-out ${

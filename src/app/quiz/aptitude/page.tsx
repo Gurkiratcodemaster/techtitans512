@@ -469,7 +469,7 @@ export default function AptitudeQuizPage() {
             {currentQuestion === quizQuestions.length - 1 ? (
               <button
                 onClick={handleQuizSubmit}
-                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
               >
                 Submit Quiz
               </button>

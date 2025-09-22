@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Navbar } from '@/components/navbar';
+import { HeroSection } from '@/components/HeroSection';
 import Footer from '@/components/footer';
 
 interface TimelineEvent {
@@ -127,9 +128,9 @@ export default function TimelinePage() {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'admission': return 'bg-blue-500';
-      case 'scholarship': return 'bg-green-500';
-      case 'entrance': return 'bg-red-500';
-      case 'career': return 'bg-purple-500';
+      case 'scholarship': return 'bg-blue-500';
+      case 'entrance': return 'bg-blue-600';
+      case 'career': return 'bg-blue-700';
       default: return 'bg-gray-500';
     }
   };
@@ -138,7 +139,7 @@ export default function TimelinePage() {
     switch (priority) {
       case 'high': return 'text-red-500 bg-red-50 border-red-200';
       case 'medium': return 'text-orange-500 bg-orange-50 border-orange-200';
-      case 'low': return 'text-green-500 bg-green-50 border-green-200';
+      case 'low': return 'text-blue-500 bg-blue-50 border-blue-200';
       default: return 'text-gray-500 bg-gray-50 border-gray-200';
     }
   };
@@ -151,40 +152,22 @@ export default function TimelinePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
       <Navbar />
       
-      <div className="pt-20 px-8">
+      <HeroSection 
+        title="Academic Timeline Tracker"
+        subtitle="Never miss important deadlines! Track admission dates, scholarship applications, entrance exams, and career opportunities all in one place"
+        loaded={loaded}
+        stats={[
+          { value: timelineEvents.filter(e => e.daysLeft <= 7).length, label: 'This Week' },
+          { value: timelineEvents.filter(e => e.daysLeft <= 30).length, label: 'This Month' },
+          { value: timelineEvents.filter(e => e.category === 'scholarship').length, label: 'Scholarships' }
+        ]}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className={`text-center mb-12 transition-opacity duration-1000 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">
-              🎯 Academic <span className="text-blue-600">Timeline Tracker</span>
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              Never miss important deadlines! Track admission dates, scholarship applications, entrance exams, and career opportunities all in one place.
-            </p>
-            
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold text-red-600">{timelineEvents.filter(e => e.daysLeft <= 7).length}</div>
-                <div className="text-sm text-gray-600">This Week</div>
-              </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold text-orange-600">{timelineEvents.filter(e => e.daysLeft <= 30).length}</div>
-                <div className="text-sm text-gray-600">This Month</div>
-              </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold text-blue-600">{timelineEvents.filter(e => e.category === 'admission').length}</div>
-                <div className="text-sm text-gray-600">Admissions</div>
-              </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold text-green-600">{timelineEvents.filter(e => e.category === 'scholarship').length}</div>
-                <div className="text-sm text-gray-600">Scholarships</div>
-              </div>
-            </div>
-          </div>
 
           {/* Filters */}
           <div className={`bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 transition-all duration-500 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
@@ -274,7 +257,7 @@ export default function TimelinePage() {
                           href={event.link} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                         >
                           🔗 Apply
                         </a>
