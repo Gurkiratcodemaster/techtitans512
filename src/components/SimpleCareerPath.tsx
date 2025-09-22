@@ -39,7 +39,7 @@ const SimpleCareerPath: React.FC<SimpleCareerPathProps> = ({ pathType, className
     <div className={`w-full ${className}`}>
       <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
         <div className="text-center mb-8">
-          <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-2">
             {pathData.title}
           </h3>
           <p className="text-gray-600 text-lg">{pathData.subtitle}</p>
@@ -52,7 +52,7 @@ const SimpleCareerPath: React.FC<SimpleCareerPathProps> = ({ pathType, className
         </div>
 
         <div className="relative">
-          <div className="absolute left-8 top-16 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 rounded-full hidden md:block"></div>
+          <div className="absolute left-8 top-16 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 rounded-full hidden md:block"></div>
           <div className="space-y-6">
             {pathData.steps.map((step, index) => (
               <div 
@@ -64,8 +64,8 @@ const SimpleCareerPath: React.FC<SimpleCareerPathProps> = ({ pathType, className
               >
                 <div className="relative flex-shrink-0">
                   <div className="absolute w-4 h-4 rounded-full border-4 border-white shadow-lg hidden md:block" style={{ backgroundColor: step.color, top: '1.5rem', left: '-3.25rem' }}></div>
-                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl text-white font-bold shadow-lg" style={{ backgroundColor: step.color }}>
-                    {step.node.icon}
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-xl text-white font-bold shadow-lg" style={{ backgroundColor: step.color }}>
+                    {step.node.icon || step.node.name.substring(0, 2)}
                   </div>
                   <div className="absolute -top-2 -right-2 w-8 h-8 bg-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold">
                     {index + 1}

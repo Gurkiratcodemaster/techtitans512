@@ -3,120 +3,38 @@ import React, { useState, useEffect } from 'react';
 import { Navbar } from '@/components/navbar';
 import { HeroSection } from '@/components/HeroSection';
 import Footer from '@/components/footer';
+import { TimelineService, TimelineEvent } from '@/lib/supabaseClient';
 
-interface TimelineEvent {
-  id: string;
-  title: string;
-  category: 'admission' | 'scholarship' | 'entrance' | 'career';
-  date: string;
-  deadline: string;
-  description: string;
-  status: 'upcoming' | 'ongoing' | 'closed';
-  daysLeft: number;
-  priority: 'high' | 'medium' | 'low';
-  link?: string;
-}
-
-const timelineEvents: TimelineEvent[] = [
-  {
-    id: '1',
-    title: 'JEE Main 2025 Registration',
-    category: 'entrance',
-    date: 'Dec 30, 2024',
-    deadline: '2024-12-30',
-    description: 'Registration for Joint Entrance Examination (Main) for admission to NITs, IIITs, and other centrally funded technical institutions.',
-    status: 'upcoming',
-    daysLeft: 5,
-    priority: 'high',
-    link: 'https://jeemain.nta.nic.in/'
-  },
-  {
-    id: '2',
-    title: 'NEET UG 2025 Application',
-    category: 'entrance',
-    date: 'Jan 15, 2025',
-    deadline: '2025-01-15',
-    description: 'Application process opens for National Eligibility cum Entrance Test for medical and dental colleges.',
-    status: 'upcoming',
-    daysLeft: 21,
-    priority: 'high'
-  },
-  {
-    id: '3',
-    title: 'Merit-based Scholarships',
-    category: 'scholarship',
-    date: 'Feb 28, 2025',
-    deadline: '2025-02-28',
-    description: 'Various government and private merit-based scholarship applications deadline.',
-    status: 'upcoming',
-    daysLeft: 65,
-    priority: 'medium'
-  },
-  {
-    id: '4',
-    title: 'DU UG Admission',
-    category: 'admission',
-    date: 'May 15, 2025',
-    deadline: '2025-05-15',
-    description: 'Delhi University undergraduate admission process begins for various courses.',
-    status: 'upcoming',
-    daysLeft: 141,
-    priority: 'medium'
-  },
-  {
-    id: '5',
-    title: 'CBSE Class 12 Results',
-    category: 'admission',
-    date: 'May 20, 2025',
-    deadline: '2025-05-20',
-    description: 'Central Board of Secondary Education announces Class 12 board examination results.',
-    status: 'upcoming',
-    daysLeft: 146,
-    priority: 'high'
-  },
-  {
-    id: '6',
-    title: 'Post Matric Scholarship',
-    category: 'scholarship',
-    date: 'Mar 31, 2025',
-    deadline: '2025-03-31',
-    description: 'Post Matric Scholarship Scheme for SC/ST/OBC students application deadline.',
-    status: 'upcoming',
-    daysLeft: 96,
-    priority: 'medium'
-  },
-  {
-    id: '7',
-    title: 'Career Fair 2025',
-    category: 'career',
-    date: 'Jan 30, 2025',
-    deadline: '2025-01-30',
-    description: 'National Career Fair featuring top companies and educational institutions.',
-    status: 'upcoming',
-    daysLeft: 36,
-    priority: 'low'
-  },
-  {
-    id: '8',
-    title: 'Engineering Entrance Coaching',
-    category: 'career',
-    date: 'Feb 10, 2025',
-    deadline: '2025-02-10',
-    description: 'Free coaching program registration for engineering entrance exams.',
-    status: 'upcoming',
-    daysLeft: 47,
-    priority: 'medium'
-  }
-];
 
 export default function TimelinePage() {
   const [loaded, setLoaded] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 100);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    async function fetchTimelineEvents() {
+      try {
+        setLoading(true);
+        const events = await TimelineService.getAllTimelineEvents();
+        setTimelineEvents(events);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching timeline events:', err);
+        setError('Failed to load timeline events. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTimelineEvents();
   }, []);
 
   const filteredEvents = timelineEvents.filter(event => {
@@ -137,8 +55,8 @@ export default function TimelinePage() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'text-red-500 bg-red-50 border-red-200';
-      case 'medium': return 'text-orange-500 bg-orange-50 border-orange-200';
+      case 'high': return 'text-blue-700 bg-blue-50 border-blue-200';
+      case 'medium': return 'text-blue-600 bg-blue-50 border-blue-200';
       case 'low': return 'text-blue-500 bg-blue-50 border-blue-200';
       default: return 'text-gray-500 bg-gray-50 border-gray-200';
     }
@@ -151,6 +69,40 @@ export default function TimelinePage() {
     return `${days} days left`;
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading timeline events...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="text-red-500 text-xl mb-4">⚠️ Error</div>
+            <p className="text-gray-600">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
       <Navbar />
@@ -160,8 +112,8 @@ export default function TimelinePage() {
         subtitle="Never miss important deadlines! Track admission dates, scholarship applications, entrance exams, and career opportunities all in one place"
         loaded={loaded}
         stats={[
-          { value: timelineEvents.filter(e => e.daysLeft <= 7).length, label: 'This Week' },
-          { value: timelineEvents.filter(e => e.daysLeft <= 30).length, label: 'This Month' },
+          { value: timelineEvents.filter(e => e.days_left <= 7).length, label: 'This Week' },
+          { value: timelineEvents.filter(e => e.days_left <= 30).length, label: 'This Month' },
           { value: timelineEvents.filter(e => e.category === 'scholarship').length, label: 'Scholarships' }
         ]}
       />
@@ -215,7 +167,7 @@ export default function TimelinePage() {
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="text-xl font-bold text-gray-800">{event.title}</h3>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(event.priority)}`}>
-                            {event.priority.toUpperCase()} PRIORITY
+                            {event.priority.charAt(0).toUpperCase() + event.priority.slice(1)} Priority
                           </span>
                         </div>
                         <p className="text-gray-600 mb-2">{event.description}</p>
@@ -239,18 +191,18 @@ export default function TimelinePage() {
                   
                   <div className="flex flex-col items-end gap-3 min-w-[120px]">
                     <div className={`px-3 py-2 rounded-full text-sm font-medium ${
-                      event.daysLeft <= 7 
-                        ? 'bg-red-100 text-red-700 border-2 border-red-200' 
-                        : event.daysLeft <= 30 
-                        ? 'bg-orange-100 text-orange-700 border-2 border-orange-200'
-                        : 'bg-blue-100 text-blue-700 border-2 border-blue-200'
+                      event.days_left <= 7 
+                        ? 'bg-blue-100 text-blue-800 border-2 border-blue-200' 
+                        : event.days_left <= 30 
+                        ? 'bg-blue-50 text-blue-700 border-2 border-blue-150'
+                        : 'bg-gray-100 text-gray-700 border-2 border-gray-200'
                     }`}>
-                      {formatDaysLeft(event.daysLeft)}
+                      {formatDaysLeft(event.days_left)}
                     </div>
                     
                     <div className="flex gap-2">
                       <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                        ⏰ Remind Me
+                        Set Reminder
                       </button>
                       {event.link && (
                         <a 
@@ -259,7 +211,7 @@ export default function TimelinePage() {
                           rel="noopener noreferrer"
                           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                         >
-                          🔗 Apply
+                          Apply Now
                         </a>
                       )}
                     </div>
@@ -270,9 +222,9 @@ export default function TimelinePage() {
           </div>
 
           {/* Notification Setup */}
-          <div className={`bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-8 mt-12 text-center transition-all duration-500 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className={`bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-8 mt-12 text-center transition-all duration-500 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-5 5v-5zM12 17H7l5 5v-5z" />
               </svg>
             </div>
@@ -280,8 +232,8 @@ export default function TimelinePage() {
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
               Set up personalized notifications to get reminders via email, SMS, and push notifications for all your important academic dates.
             </p>
-            <button className="px-8 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-full font-semibold hover:from-orange-700 hover:to-red-700 transition-all duration-300 transform hover:scale-105">
-              🔔 Setup Notifications
+            <button className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105">
+              Setup Notifications
             </button>
           </div>
         </div>

@@ -23,36 +23,36 @@ const defaultSteps: FlowStep[] = [
     id: "step1",
     title: "Class 12",
     description: "Choose your stream (PCM/PCB/Commerce)",
-    icon: "🎓",
+    icon: "12",
     color: "#3B82F6"
   },
   {
     id: "step2", 
     title: "Entrance Exams",
     description: "JEE, NEET, CAT, etc.",
-    icon: "📝",
-    color: "#EF4444"
+    icon: "EX",
+    color: "#1E40AF"
   },
   {
     id: "step3",
     title: "Degree Selection",
     description: "Choose your undergraduate program",
-    icon: "🎯",
-    color: "#8B5CF6"
+    icon: "UG",
+    color: "#1D4ED8"
   },
   {
     id: "step4",
     title: "Specialization",
     description: "Focus on specific skills",
-    icon: "🔧",
-    color: "#F59E0B"
+    icon: "SP",
+    color: "#2563EB"
   },
   {
     id: "step5",
     title: "Dream Career",
     description: "Land your ideal job",
-    icon: "🚀",
-    color: "#10B981"
+    icon: "CR",
+    color: "#3B82F6"
   }
 ];
 
@@ -346,8 +346,8 @@ const CareerFlowDiagram: React.FC<CareerFlowDiagramProps> = ({
     <div className={`w-full ${className}`}>
       <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/20">
         {/* Header */}
-        <div className="text-center mb-6">
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+        <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-2">
             {title}
           </h3>
           <p className="text-gray-600">
@@ -367,7 +367,7 @@ const CareerFlowDiagram: React.FC<CareerFlowDiagramProps> = ({
 
         {/* Step Details */}
         {activeStepData && (
-          <div className="mt-6 p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl border border-purple-200">
+          <div className="mt-6 p-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl border border-blue-200">
             <div className="flex items-center mb-4">
               <div 
                 className="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl font-bold mr-4 shadow-lg"
@@ -385,7 +385,7 @@ const CareerFlowDiagram: React.FC<CareerFlowDiagramProps> = ({
 
         {/* Instructions */}
         <div className="mt-4 text-center text-sm text-gray-500">
-          💡 Click on any step to learn more about it
+          Click on any step to learn more about it
         </div>
       </div>
     </div>

@@ -3,7 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/HeroSection";
 import CornerChatbot from "@/components/CornerChatbot";
-import { CareerPathService, DegreeOverview } from "@/lib/supabaseClient";import * as d3 from "d3";
+import { CareerService, DegreeOverview } from "@/lib/supabaseClient";
+import * as d3 from "d3";
 
 export default function CareerPathsPage() {
   const [loaded, setLoaded] = useState(false);
@@ -18,13 +19,19 @@ export default function CareerPathsPage() {
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 100);
     async function fetchData() {
-        setLoading(true);
-        const data = await CareerPathService.getDegreeOverviews();
-        if (data.length > 0) {
-            // Set the first degree as the default selection
-            setSelectedDegree(data[0]);
+        try {
+            setLoading(true);
+            const data = await CareerService.getDegreeOverviews();
+            setCareerPathsData(data);
+            if (data.length > 0) {
+                // Set the first degree as the default selection
+                setSelectedDegree(data[0]);
+            }
+        } catch (error) {
+            console.error('Error fetching career paths:', error);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
     fetchData();
     return () => clearTimeout(timer);
@@ -71,42 +78,103 @@ export default function CareerPathsPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading career paths...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white">
       <Navbar />
       <HeroSection 
-        title="Career Path Mapping"
-        subtitle="Explore diverse career opportunities and plan your academic journey"
+        title="Career Path Explorer"
+        subtitle="Discover diverse career opportunities and plan your academic journey"
         loaded={loaded}
+        stats={[
+          { value: careerPathsData.length, label: 'Degree Programs' },
+          { value: careerPathsData.reduce((sum, degree) => sum + degree.jobs.length, 0), label: 'Career Options' },
+          { value: careerPathsData.reduce((sum, degree) => sum + degree.higher_studies.length, 0), label: 'Study Paths' }
+        ]}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Select a Degree to Explore</h2>
-            {loading ? (
-              <div className="text-center">Loading degrees...</div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className={`bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 transition-all duration-500 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Select a Degree to Explore</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {careerPathsData.map((degree) => (
                   <button
                     key={degree.id}
                     onClick={() => setSelectedDegree(degree)}
-                    className={`p-4 rounded-2xl text-left transition-all duration-300 transform hover:scale-105 ${
+                    className={`p-6 rounded-xl text-left transition-all duration-300 transform hover:scale-105 border-2 ${
                       selectedDegree?.id === degree.id
-                        ? 'bg-blue-600 text-white shadow-lg'
-                        : 'bg-white/80 backdrop-blur-sm text-gray-800 hover:shadow-lg'
+                        ? 'bg-blue-600 text-white shadow-lg border-blue-600'
+                        : 'bg-white text-gray-800 hover:shadow-lg border-gray-200 hover:border-blue-300'
                     }`}
                   >
                     <h3 className="font-bold text-lg mb-2">{degree.degree}</h3>
                     <p className={`text-sm ${selectedDegree?.id === degree.id ? 'text-blue-100' : 'text-gray-600'}`}>
                       {degree.description}
                     </p>
+                    <div className="mt-3 text-xs opacity-75">
+                      {degree.jobs.length} careers • {degree.higher_studies.length} study options
+                    </div>
                   </button>
                 ))}
               </div>
-            )}
+            </div>
           </div>
-          {/* ... (The rest of your JSX for visualization and details remains the same) ... */}
+          
+          {selectedDegree && (
+            <div className={`space-y-6 transition-all duration-500 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              {/* Career Options */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Career Options with {selectedDegree.degree}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {selectedDegree.jobs.map((job, index) => (
+                    <div 
+                      key={index}
+                      className="p-4 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
+                      onClick={() => {
+                        setSelectedNode(job);
+                        setShowChatbot(true);
+                      }}
+                    >
+                      <div className="font-semibold text-gray-800">{job}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Higher Studies Options */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Higher Studies Options</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {selectedDegree.higher_studies.map((study, index) => (
+                    <div 
+                      key={index}
+                      className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer"
+                      onClick={() => {
+                        setSelectedNode(study);
+                        setShowChatbot(true);
+                      }}
+                    >
+                      <div className="font-semibold text-gray-800">{study}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <CornerChatbot
