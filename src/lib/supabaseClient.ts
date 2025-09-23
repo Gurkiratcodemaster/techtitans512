@@ -1,10 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
 // --- Supabase Client Initialization ---
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // --- Data Interfaces ---
 export interface CareerNode {
@@ -139,10 +139,26 @@ export interface DegreeOverview {
   id: string;
   degree: string;
   description: string;
-  jobs: string[];
-  higher_studies: string[];
-  created_at?: string;
-  updated_at?: string;
+  duration?: string;
+  difficulty?: string;
+  jobs: CareerJob[];
+  higher_studies: HigherStudy[];
+}
+
+export interface CareerJob {
+  id: string;
+  job_title: string;
+  salary_range?: string;
+  job_description?: string;
+  required_skills?: string[];
+}
+
+export interface HigherStudy {
+  id: string;
+  study_title: string;
+  study_description?: string;
+  duration?: string;
+  specializations?: string[];
 }
 
 export interface CareerPath {
@@ -514,136 +530,89 @@ export class TimelineService {
  */
 export class CareerService {
   static async getDegreeOverviews(): Promise<DegreeOverview[]> {
-    // For now, return mock data since we don't have this table yet
-    return [
-      {
-        id: '1',
-        degree: 'B.Tech Computer Science',
-        description: 'Bachelor of Technology in Computer Science & Engineering',
-        jobs: ['Software Developer', 'Data Scientist', 'AI Engineer', 'Cybersecurity Analyst'],
-        higher_studies: ['M.Tech CS', 'MS Computer Science', 'MBA', 'Data Science Masters']
-      },
-      {
-        id: '2',
-        degree: 'B.Tech Electronics',
-        description: 'Bachelor of Technology in Electronics & Communication',
-        jobs: ['Hardware Engineer', 'Embedded Systems Engineer', 'Network Engineer', 'VLSI Designer'],
-        higher_studies: ['M.Tech Electronics', 'MS EE', 'MBA', 'PhD Electronics']
-      },
-      {
-        id: '3',
-        degree: 'B.Sc Data Science',
-        description: 'Bachelor of Science in Data Science',
-        jobs: ['Data Analyst', 'Machine Learning Engineer', 'Business Analyst', 'Research Scientist'],
-        higher_studies: ['M.Sc Data Science', 'MBA Analytics', 'PhD Statistics', 'MS AI/ML']
+    try {
+      // Fetch degrees with their related jobs and higher studies
+      const { data: degrees, error: degreesError } = await supabase
+        .from('degree_overviews')
+        .select(`
+          id,
+          degree,
+          description,
+          duration,
+          difficulty,
+          career_jobs (
+            id,
+            job_title,
+            salary_range,
+            job_description,
+            required_skills
+          ),
+          higher_studies (
+            id,
+            study_title,
+            study_description,
+            duration,
+            specializations
+          )
+        `)
+        .order('degree', { ascending: true });
+
+      if (degreesError) {
+        console.error('Error fetching degrees:', degreesError);
+        throw degreesError;
       }
-    ];
+
+      // Transform the data to match the expected interface
+      const transformedData: DegreeOverview[] = degrees.map((degree: any) => ({
+        id: degree.id,
+        degree: degree.degree,
+        description: degree.description,
+        duration: degree.duration,
+        difficulty: degree.difficulty,
+        jobs: degree.career_jobs || [],
+        higher_studies: degree.higher_studies || []
+      }));
+
+      return transformedData;
+    } catch (error) {
+      console.error('Error in getDegreeOverviews:', error);
+      throw error;
+    }
   }
 
-  static async getAllDegreesForGraph(): Promise<string[]> {
-    return CareerPathService.getAllDegrees();
+  // Additional helper methods
+  static async getJobsByDegree(degreeId: string): Promise<CareerJob[]> {
+    const { data, error } = await supabase
+      .from('career_jobs')
+      .select('*')
+      .eq('degree_id', degreeId);
+
+    if (error) throw error;
+    return data || [];
   }
 
-  static async getGraphDataForDegree(degreeName: string): Promise<CareerPathData> {
-    return CareerPathService.getCareerPathForDegree(degreeName);
+  static async getHigherStudiesByDegree(degreeId: string): Promise<HigherStudy[]> {
+    const { data, error } = await supabase
+      .from('higher_studies')
+      .select('*')
+      .eq('degree_id', degreeId);
+
+    if (error) throw error;
+    return data || [];
   }
 
-  static async getLinearCareerPath(pathType: "engineering" | "medical" | "business"): Promise<CareerPath> {
-    // Mock data for different career paths
-    const paths = {
-      engineering: {
-        title: "Engineering Career Path",
-        subtitle: "Your journey from Class 12 to becoming an Engineer",
-        steps: [
-          {
-            node: { id: 'step1', name: 'Class 12 PCM', type: 'degree' as const, description: 'Complete Class 12 with Physics, Chemistry, Mathematics', icon: '🎓' },
-            timeline: 'Class 12',
-            details: ['Score 75%+ in PCM subjects', 'Focus on JEE preparation', 'Complete NCERT thoroughly'],
-            color: '#3B82F6'
-          },
-          {
-            node: { id: 'step2', name: 'JEE Preparation', type: 'exam' as const, description: 'Prepare for Joint Entrance Examination', icon: '📝' },
-            timeline: 'Class 11-12',
-            details: ['Join coaching or self-study', 'Practice previous year papers', 'Take mock tests regularly'],
-            color: '#EF4444'
-          },
-          {
-            node: { id: 'step3', name: 'B.Tech Degree', type: 'degree' as const, description: 'Complete Bachelor of Technology', icon: '🎯' },
-            timeline: '4 Years',
-            details: ['Choose specialization wisely', 'Maintain good CGPA', 'Participate in internships'],
-            color: '#8B5CF6'
-          },
-          {
-            node: { id: 'step4', name: 'Engineering Career', type: 'career' as const, description: 'Start your engineering career', icon: '👨‍💻' },
-            timeline: 'Lifetime',
-            details: ['Apply for jobs in final year', 'Consider higher studies', 'Build professional network'],
-            color: '#10B981'
-          }
-        ]
-      },
-      medical: {
-        title: "Medical Career Path",
-        subtitle: "Your journey from Class 12 to becoming a Doctor",
-        steps: [
-          {
-            node: { id: 'step1', name: 'Class 12 PCB', type: 'degree' as const, description: 'Complete Class 12 with Physics, Chemistry, Biology', icon: '🧬' },
-            timeline: 'Class 12',
-            details: ['Score 90%+ in PCB subjects', 'Focus on NEET preparation', 'Strong foundation in Biology'],
-            color: '#DC2626'
-          },
-          {
-            node: { id: 'step2', name: 'NEET Preparation', type: 'exam' as const, description: 'Prepare for National Eligibility cum Entrance Test', icon: '⚕️' },
-            timeline: 'Class 11-12',
-            details: ['NCERT is most important', 'Practice MCQs extensively', 'Focus on accuracy over speed'],
-            color: '#7C2D12'
-          },
-          {
-            node: { id: 'step3', name: 'MBBS Degree', type: 'degree' as const, description: 'Complete Bachelor of Medicine and Surgery', icon: '🏥' },
-            timeline: '5.5 Years',
-            details: ['Complete all rotations', 'Pass all professional exams', 'Gain clinical experience'],
-            color: '#059669'
-          },
-          {
-            node: { id: 'step4', name: 'Medical Practice', type: 'career' as const, description: 'Start medical practice or specialization', icon: '🩺' },
-            timeline: 'Lifetime',
-            details: ['Choose specialization', 'Complete residency', 'Continuous learning'],
-            color: '#0891B2'
-          }
-        ]
-      },
-      business: {
-        title: "Business Career Path",
-        subtitle: "Your journey from Class 12 to Business Leadership",
-        steps: [
-          {
-            node: { id: 'step1', name: 'Class 12', type: 'degree' as const, description: 'Complete Class 12 in any stream', icon: '💼' },
-            timeline: 'Class 12',
-            details: ['Good academic performance', 'Develop communication skills', 'Understand business basics'],
-            color: '#7C3AED'
-          },
-          {
-            node: { id: 'step2', name: 'Graduation', type: 'degree' as const, description: 'Complete Bachelor degree in any field', icon: '🎓' },
-            timeline: '3-4 Years',
-            details: ['Maintain good grades', 'Gain work experience', 'Develop leadership skills'],
-            color: '#2563EB'
-          },
-          {
-            node: { id: 'step3', name: 'MBA Preparation', type: 'exam' as const, description: 'Prepare for CAT/XAT and other MBA entrance exams', icon: '📊' },
-            timeline: '1 Year',
-            details: ['CAT preparation', 'Work experience helps', 'Strong quantitative skills'],
-            color: '#DC2626'
-          },
-          {
-            node: { id: 'step4', name: 'Business Career', type: 'career' as const, description: 'Leadership roles in business', icon: '🚀' },
-            timeline: 'Lifetime',
-            details: ['Management roles', 'Entrepreneurship', 'Strategic thinking'],
-            color: '#059669'
-          }
-        ]
-      }
-    };
-    
-    return paths[pathType];
+  // Search functionality
+  static async searchCareers(query: string): Promise<CareerJob[]> {
+    const { data, error } = await supabase
+      .from('career_jobs')
+      .select(`
+        *,
+        degree_overviews (degree)
+      `)
+      .ilike('job_title', `%${query}%`);
+
+    if (error) throw error;
+    return data || [];
   }
 }
 

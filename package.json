@@ -20,20 +20,30 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@mistralai/mistralai": "^1.10.0",
     "@prisma/client": "^6.16.2",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.57.4",
+    "@tanstack/react-query": "^5.90.1",
+    "@tanstack/react-query-devtools": "^5.90.1",
     "@vercel/speed-insights": "^1.2.0",
     "ai": "^5.0.47",
     "curl": "^0.1.4",
     "d3": "^7.9.0",
     "firebase": "^12.3.0",
+    "framer-motion": "^12.23.18",
     "huggingface": "^1.4.0",
+    "motion": "^12.23.19",
     "next": "15.5.3",
     "openai": "^5.22.0",
     "prisma": "^6.16.2",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.63.0",
+    "zod": "^3.25.76",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

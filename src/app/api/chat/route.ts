@@ -16,7 +16,6 @@ export async function POST(request: Request) {
     
     console.log("OpenAI key exists:", !!openaiApiKey);
     console.log("Mistral key exists:", !!mistralApiKey);
-    console.log("HF token exists:", !!hfToken);
     
     if (openaiApiKey && openaiApiKey !== "your_openai_api_key_here") {
       console.log("Attempting OpenAI API...");

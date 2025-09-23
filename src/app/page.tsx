@@ -60,7 +60,7 @@ export default function Home() {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
-      <div className="pt-20 px-8">
+      <div className="pt-11 px-8">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <HeroSection
@@ -383,7 +383,7 @@ export default function Home() {
                 Get timely notifications for admission deadlines, scholarship applications, entrance test dates, and career opportunities
               </p>
             </div>
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="max-w-md mx-auto">
               {/* Subscription Form */}
               <div className={`bg-gray-50 rounded-2xl p-4 transform transition-all duration-400 delay-600 ${
                 loaded ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
@@ -424,50 +424,16 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Upcoming Deadlines Preview */}
-              <div className={`bg-gray-50 rounded-2xl p-6 transform transition-all duration-400 delay-650 ${
-                loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
-              }`}>
-                <h5 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                  <svg className="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Upcoming Important Dates
-                </h5>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between py-2 px-3 bg-blue-50 border-l-4 border-blue-500 rounded">
-                    <div>
-                      <div className="font-medium text-gray-800">JEE Main Registration</div>
-                      <div className="text-blue-600">Deadline: Dec 30, 2024</div>
-                    </div>
-                    <div className="text-blue-600 text-xs bg-blue-100 px-2 py-1 rounded-full font-medium">
-                      5 days left
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between py-2 px-3 bg-blue-50 border-l-4 border-blue-500 rounded">
-                    <div>
-                      <div className="font-medium text-gray-800">NEET Application</div>
-                      <div className="text-blue-600">Opens: Jan 15, 2025</div>
-                    </div>
-                    <div className="text-blue-600 text-xs bg-blue-100 px-2 py-1 rounded-full font-medium">
-                      21 days
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between py-2 px-3 bg-blue-50 border-l-4 border-blue-500 rounded">
-                    <div>
-                      <div className="font-medium text-gray-800">Merit Scholarships</div>
-                      <div className="text-blue-600">Deadline: Feb 28, 2025</div>
-                    </div>
-                    <div className="text-blue-600 text-xs bg-blue-100 px-2 py-1 rounded-full font-medium">
-                      65 days
-                    </div>
-                  </div>
-                  <div className="text-center mt-4">
-                    <Link href="/timeline" className="text-blue-600 hover:text-blue-800 text-sm font-medium underline transition-colors">
-                      View Full Timeline →
-                    </Link>
-                  </div>
-                </div>
+              {/* View Full Timeline Link */}
+              <div className="text-center mt-6">
+                <Link 
+                  href="/timeline" 
+                  className={`inline-block px-8 py-3 bg-white border-2 border-blue-600 text-blue-600 font-semibold rounded-full hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 text-center delay-650 ${
+                    loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+                  }`}
+                >
+                  View Full Timeline →
+                </Link>
               </div>
             </div>
 
@@ -571,3 +537,4 @@ export default function Home() {
     </div>
   );
 }
+
