@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Removed Tailwind directives because build tool does not support them */
 
 :root {
   --background: #ffffff;
