@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient"; // adjust path if needed
-import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { FeatureCard } from "@/app/about/FeatureCard";
 
@@ -30,7 +29,6 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
-      <Navbar />
       <HeroSection
         title="About Career Choice"
         subtitle="Empowering individuals to make informed career decisions through personalized guidance and intelligent recommendations."

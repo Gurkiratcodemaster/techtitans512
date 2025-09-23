@@ -21,9 +21,7 @@ A modern, full-stack career guidance platform built with Next.js, TypeScript, Ta
 - **D3.js** - Data visualization
 
 ### Backend & Database
-- **Supabase** - PostgreSQL database and real-time features
-- **Prisma** - Database ORM and migrations
-- **Firebase** - Authentication (optional)
+- **Supabase** - PostgreSQL database, authentication, and real-time features
 
 ### AI & APIs
 - **OpenAI** - GPT models for chat
@@ -70,12 +68,6 @@ HF_TOKEN="your-huggingface-token"
 
 4. **Set up the database**
 ```bash
-# Generate Prisma client
-npm run db:generate
-
-# Push database schema
-npm run db:push
-
 # Initialize with sample data
 npm run db:init
 ```
@@ -117,8 +109,7 @@ src/
 ├── contexts/            # React contexts
 │   └── AuthContext.tsx
 ├── lib/                 # Utility libraries
-│   ├── database.ts      # Prisma client
-│   └── supabase.ts      # Supabase client & services
+│   └── supabaseClient.ts  # Supabase client & services
 └── scripts/             # Migration scripts
     └── migrate-to-supabase.ts
 ```
@@ -145,10 +136,6 @@ npm run start            # Start production server
 npm run lint             # Run ESLint
 
 # Database
-npm run db:generate      # Generate Prisma client
-npm run db:push          # Push schema changes
-npm run db:migrate       # Create and run migrations
-npm run db:studio        # Open Prisma Studio
 npm run db:init          # Initialize with sample data
 
 # Migration

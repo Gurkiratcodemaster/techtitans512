@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   // PWA and offline optimizations
   experimental: {
     optimizePackageImports: ['@mistralai/mistralai', 'openai'],
+    turbo: undefined, // Disable turbopack
   },
   
   // Development cache settings
@@ -77,6 +78,13 @@ const nextConfig: NextConfig = {
         ],
       },
     ];
+  },
+  
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
   },
 };
 

@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, loading, logout } = useAuth();
+  const { user, loading, signOut } = useAuth();
 
   const handleDropdownToggle = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
@@ -215,9 +215,9 @@ export function Navbar() {
                   onClick={() => handleDropdownToggle('profile')}
                   className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full font-semibold transition-all duration-300 hover:from-blue-700 hover:to-blue-800 cursor-pointer hover:scale-105"
                 >
-                  {user.photoURL ? (
+                  {user?.user_metadata?.avatar_url ? (
                     <img 
-                      src={user.photoURL} 
+                      src={user.user_metadata.avatar_url} 
                       alt="Profile" 
                       className="w-6 h-6 rounded-full"
                     />
@@ -227,7 +227,7 @@ export function Navbar() {
                     </svg>
                   )}
                   <span className="max-w-24 truncate">
-                    {user.displayName || user.email?.split('@')[0] || 'User'}
+                    {user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'}
                   </span>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
@@ -261,7 +261,7 @@ export function Navbar() {
                     Settings
                   </Link>
                   <button 
-                    onClick={logout}
+                    onClick={signOut}
                     className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50 cursor-pointer transition-colors duration-150"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -331,9 +331,9 @@ export function Navbar() {
               ) : user ? (
                 <div className="space-y-2">
                   <div className="flex items-center space-x-3 px-2 py-2 bg-blue-50 rounded-lg">
-                    {user.photoURL ? (
+                    {user?.user_metadata?.avatar_url ? (
                       <img 
-                        src={user.photoURL} 
+                        src={user.user_metadata.avatar_url} 
                         alt="Profile" 
                         className="w-8 h-8 rounded-full"
                       />
@@ -345,7 +345,7 @@ export function Navbar() {
                       </div>
                     )}
                     <span className="font-medium text-gray-900 truncate">
-                      {user.displayName || user.email?.split('@')[0] || 'User'}
+                      {user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'}
                     </span>
                   </div>
                   <Link 
@@ -359,7 +359,7 @@ export function Navbar() {
                     Profile
                   </Link>
                   <button 
-                    onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                    onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
                     className="flex items-center w-full px-2 py-2 text-red-600 hover:bg-red-50 transition-colors duration-150"
                   >
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

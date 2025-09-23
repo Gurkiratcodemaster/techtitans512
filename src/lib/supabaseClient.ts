@@ -854,3 +854,80 @@ export class ProfileService {
     Please provide personalized career guidance based on this profile information.`;
   }
 }
+
+// --- Quiz Interfaces ---
+export interface QuizQuestion {
+  id: string;
+  question_text: string;
+  options: string[];
+  correct_answer: number;
+  category: string;
+}
+
+export interface QuizResult {
+  id?: string;
+  user_id: string;
+  class_level: number;
+  score: number;
+  total_questions: number;
+  answers: number[];
+  category_scores: Record<string, number>;
+  recommendations: string[];
+  created_at?: string;
+}
+
+// --- Quiz Functions ---
+export async function fetchQuizQuestions(classLevel: number): Promise<QuizQuestion[]> {
+  // For now, return mock data since we don't have a quiz questions table
+  const mockQuestions: QuizQuestion[] = [
+    {
+      id: '1',
+      question_text: 'Which subject do you enjoy the most?',
+      options: ['Mathematics', 'Science', 'History', 'Literature'],
+      correct_answer: 0,
+      category: 'interest'
+    },
+    {
+      id: '2',
+      question_text: 'What type of activities do you prefer?',
+      options: ['Problem solving', 'Creative writing', 'Experiments', 'Reading'],
+      correct_answer: 0,
+      category: 'activity'
+    },
+    {
+      id: '3',
+      question_text: 'Which career field interests you most?',
+      options: ['Technology', 'Medicine', 'Business', 'Arts'],
+      correct_answer: 0,
+      category: 'career'
+    },
+    {
+      id: '4',
+      question_text: 'How do you prefer to work?',
+      options: ['Independently', 'In teams', 'With guidance', 'Leading others'],
+      correct_answer: 0,
+      category: 'work_style'
+    },
+    {
+      id: '5',
+      question_text: 'What motivates you the most?',
+      options: ['Solving complex problems', 'Helping others', 'Creating new things', 'Achieving goals'],
+      correct_answer: 0,
+      category: 'motivation'
+    }
+  ];
+
+  return mockQuestions;
+}
+
+export async function saveQuizResult(result: QuizResult): Promise<void> {
+  // For now, just log the result since we don't have a quiz results table
+  console.log('Quiz result saved:', result);
+  
+  // In a real implementation, you would save to Supabase:
+  // const { error } = await supabase
+  //   .from('quiz_results')
+  //   .insert(result);
+  // 
+  // if (error) throw error;
+}

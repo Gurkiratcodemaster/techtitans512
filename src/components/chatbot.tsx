@@ -25,6 +25,7 @@ export default function Chatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(false); // Track if we should auto-scroll
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,9 +35,9 @@ export default function Chatbot() {
         const profileData = localStorage.getItem('userProfile');
         if (profileData) {
           const profile = JSON.parse(profileData);
-          if (profile.userId === user.uid) {
+          if (profile.userId === user.id) {
             setUserProfile(profile);
-            // Update initial message with personalized greeting
+            // Update initial message with personalized greeting without auto-scroll
             setMessages([{
               id: '1',
               role: 'assistant',
@@ -56,8 +57,12 @@ export default function Chatbot() {
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    // Only scroll to bottom if we should auto-scroll (after user interactions, not initial load)
+    if (shouldAutoScroll && messages.length > 1) {
+      scrollToBottom();
+      setShouldAutoScroll(false); // Reset flag after scrolling
+    }
+  }, [messages, shouldAutoScroll]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +76,7 @@ export default function Chatbot() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    setShouldAutoScroll(true); // Enable auto-scroll for user interactions
     const currentInput = input;
     setInput('');
     setIsLoading(true);
@@ -129,6 +135,7 @@ export default function Chatbot() {
         };
 
         setMessages(prev => [...prev, assistantMessage]);
+        setShouldAutoScroll(true); // Enable auto-scroll for AI response
 
         while (true) {
           const { done, value } = await reader.read();
@@ -172,6 +179,7 @@ export default function Chatbot() {
           timestamp: new Date()
         };
         setMessages(prev => [...prev, assistantMessage]);
+        setShouldAutoScroll(true); // Enable auto-scroll for AI response
       }
 
     } catch (error) {
@@ -183,6 +191,7 @@ export default function Chatbot() {
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
+      setShouldAutoScroll(true); // Enable auto-scroll for error message
     } finally {
       setIsLoading(false);
       setIsStreaming(false);

@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/HeroSection";
 import CornerChatbot from "@/components/CornerChatbot";
 import { CareerService, DegreeOverview } from "@/lib/supabaseClient";
@@ -83,7 +82,7 @@ export default function CareerPathsPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <Navbar />
+        
         <div className="flex items-center justify-center min-h-screen">
           <motion.div
             className="text-center"
@@ -117,7 +116,7 @@ export default function CareerPathsPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <Navbar />
+        
         <div className="flex items-center justify-center min-h-screen">
           <motion.div
             className="text-center p-8 bg-white rounded-2xl shadow-lg max-w-md"
@@ -154,7 +153,7 @@ export default function CareerPathsPage() {
       animate="animate"
       exit="exit"
     >
-      <Navbar />
+      
       <HeroSection 
         title="Career Path Explorer"
         subtitle="Discover diverse career opportunities and plan your academic journey"

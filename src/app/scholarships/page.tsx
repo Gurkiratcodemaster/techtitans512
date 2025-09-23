@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Navbar } from "@/components/navbar";
 import { supabase } from "@/lib/supabaseClient"; // Adjust this path if necessary
 
 interface Scholarship {
@@ -154,7 +153,6 @@ export default function ScholarshipsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
-      <Navbar />
       
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-r from-gray-800 via-blue-600 to-black">

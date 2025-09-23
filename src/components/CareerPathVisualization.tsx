@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { CareerPathService, CareerNode, CareerLink, CareerPathData } from "@/lib/supabaseClient"; // Adjust path if needed
-import { Navbar } from "@/components/navbar"; // Assuming you have a Navbar
 
 const CareerPathVisualizationPage = () => {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -169,7 +168,6 @@ const CareerPathVisualizationPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <main className="container mx-auto px-4 py-8">
         <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-lg">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">Interactive Career Path Explorer</h2>

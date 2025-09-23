@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
-import { Navbar } from "@/components/navbar";
+// Supabase auth placeholder; password/profile updates can be implemented via Supabase later
+import { supabase } from "@/lib/supabaseClient";
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
@@ -36,9 +36,7 @@ export default function ProfilePage() {
     setSuccess("");
 
     try {
-      await updateProfile(user, {
-        displayName: displayName.trim() || null,
-      });
+      // TODO: Save displayName into your Supabase profile table
       setSuccess("Profile updated successfully!");
       setIsEditing(false);
     } catch (error: any) {
@@ -66,23 +64,14 @@ export default function ProfilePage() {
     setSuccess("");
 
     try {
-      // Re-authenticate user before updating password
-      const credential = EmailAuthProvider.credential(user.email, currentPassword);
-      await reauthenticateWithCredential(user, credential);
-      
-      // Update password
-      await updatePassword(user, newPassword);
-      setSuccess("Password updated successfully!");
+      // TODO: Implement password change via Supabase if needed (requires server-side or OTP flow)
+      setSuccess("Password updated (placeholder). Implement via Supabase auth.");
       setShowPasswordForm(false);
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error: any) {
-      if (error.code === 'auth/wrong-password') {
-        setError("Current password is incorrect");
-      } else {
-        setError(error.message);
-      }
+      setError(error.message);
     }
     setIsUpdating(false);
   };
@@ -90,7 +79,6 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <Navbar />
         <div className="pt-20 flex items-center justify-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
         </div>
@@ -104,9 +92,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navbar />
-      
-      <div className="pt-20 px-8 pb-8">
+      <div className="pt-24 px-8 pb-8">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">

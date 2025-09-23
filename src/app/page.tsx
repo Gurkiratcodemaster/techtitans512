@@ -1,11 +1,14 @@
 "use client";
-import { Navbar } from "@/components/navbar";
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { openChatbot } from "@/components/chatbot";
 import CornerChatbot from "@/components/CornerChatbot";
+import { supabase } from "@/lib/supabaseClient";
 import HeroSection from "@/components/HeroSection";
+import { Navbar } from "@/components/navbar";
+import { BACKGROUNDS, COLORS, RESPONSIVE } from "@/lib/theme";
 import dynamic from 'next/dynamic';
 
 // Dynamically import the CareerFlowDiagram component
@@ -19,28 +22,7 @@ export default function Home() {
   const [currentQuote, setCurrentQuote] = useState(0);
   const [showCornerChatbot, setShowCornerChatbot] = useState(false);
 
-  const motivationalQuotes = [
-    {
-      text: "Education is the most powerful weapon which you can use to change the world.",
-      author: "Nelson Mandela"
-    },
-    {
-      text: "The beautiful thing about learning is that no one can take it away from you.",
-      author: "B.B. King"
-    },
-    {
-      text: "Education is not preparation for life; education is life itself.",
-      author: "John Dewey"
-    },
-    {
-      text: "The more that you read, the more things you will know. The more that you learn, the more places you'll go.",
-      author: "Dr. Seuss"
-    },
-    {
-      text: "Success is no accident. It is hard work, perseverance, learning, studying, sacrifice.",
-      author: "Pele"
-    }
-  ];
+  const [motivationalQuotes, setMotivationalQuotes] = useState<{ text: string; author: string }[]>([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -51,115 +33,140 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    async function loadQuotes() {
+      const { data } = await supabase
+        .from('motivational_quotes')
+        .select('text, author')
+        .order('author');
+      setMotivationalQuotes(data || []);
+    }
+    loadQuotes();
+  }, []);
+
+  useEffect(() => {
+    if (motivationalQuotes.length === 0) return;
     const quoteInterval = setInterval(() => {
       setCurrentQuote((prev) => (prev + 1) % motivationalQuotes.length);
     }, 4000);
-
     return () => clearInterval(quoteInterval);
-  }, [motivationalQuotes.length]);
+  }, [motivationalQuotes]);
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
-      <div className="pt-11 px-8">
+    <motion.div 
+      className={BACKGROUNDS.page + " min-h-screen"}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <Navbar />
+      <HeroSection
+        title="Welcome to Career Choice"
+        subtitle="Discover your perfect career path with our AI-powered guidance, personalized assessments, and expert recommendations."
+        stats={[
+          { value: "10,000+", label: "Students Guided" },
+          { value: "500+", label: "Career Paths" },
+          { value: "95%", label: "Success Rate" }
+        ]}
+        loaded={loaded}
+      />
+      
+      <div className={RESPONSIVE.container + " " + RESPONSIVE.section}>
         <div className="max-w-6xl mx-auto">
-          {/* Hero Section */}
-          <HeroSection
-            title="Welcome to Career Choice"
-            subtitle="Discover your perfect career path with our AI-powered guidance, personalized assessments, and expert recommendations."
-            loaded={loaded}
-          />
-
           {/* Feature Cards */}
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             {/* Career Quiz Card */}
-            <div className={`bg-white rounded-3xl p-8 shadow-lg text-center transform transition-all duration-500 ease-out delay-100 ${
-              loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
-            }`}>
-              <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 transform transition-all duration-400 delay-150 ${
+            <motion.div 
+              className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 text-center"}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
+              transition={{ delay: 0.1 }}
+            >
+              <motion.div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 ${
                 loaded ? 'rotate-0 scale-100' : 'rotate-180 scale-0'
-              }`}>
+              }`}
+              initial={{ rotate: 180, scale: 0 }}
+              animate={{ rotate: 0, scale: 1 }}
+              transition={{ delay: 0.15 }}
+              >
                 <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-              </div>
-              <h2 className={`text-2xl font-bold text-gray-800 mb-4 transform transition-all duration-400 delay-200 ${
-                loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
-              }`}>Career Assessment</h2>
-              <p className={`text-gray-600 mb-6 font-medium transform transition-all duration-400 delay-250 ${
-                loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
-              }`}>Take our comprehensive quiz to discover which career paths align with your skills and interests.</p>
-              <div className={`space-y-3 transform transition-all duration-400 delay-300 ${
-                loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-              }`}>
-                <Link href="/quiz/class10" className="block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105">
+              </motion.div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Career Assessment</h2>
+              <p className="text-gray-600 mb-6 font-medium">Take our comprehensive quiz to discover which career paths align with your skills and interests.</p>
+              <div className="space-y-3">
+                <Link href="/quiz/class10" className={`block w-full ${COLORS.primary.gradient} ${COLORS.primary.gradientHover} ${RESPONSIVE.button} text-center hover:scale-105 transition-all duration-300`}>
                   Class 10 Assessment
                 </Link>
-                <Link href="/quiz/class12" className="block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105">
+                <Link href="/quiz/class12" className={`block w-full ${COLORS.primary.gradient} ${COLORS.primary.gradientHover} ${RESPONSIVE.button} text-center hover:scale-105 transition-all duration-300`}>
                   Class 12 Assessment
                 </Link>
               </div>
-            </div>
+            </motion.div>
 
             {/* AI Chatbot Card */}
-            <div className={`bg-white rounded-3xl p-8 shadow-lg text-center transform transition-all duration-500 ease-out delay-150 cursor-pointer ${
-              loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
-            }`}>
-              <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 transform transition-all duration-400 delay-200 ${
-                loaded ? 'rotate-0 scale-100' : '-rotate-180 scale-0'
-              }`}>
+            <motion.div 
+              className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 text-center cursor-pointer"}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
+              transition={{ delay: 0.2 }}
+              onClick={() => setShowCornerChatbot(true)}
+            >
+              <motion.div 
+                className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6"
+                initial={{ rotate: -180, scale: 0 }}
+                animate={{ rotate: 0, scale: 1 }}
+                transition={{ delay: 0.25 }}
+              >
                 <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
-              </div>
-              <h2 className={`text-2xl font-bold text-gray-800 mb-4 transform transition-all duration-400 delay-250 ${
-                loaded ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
-              }`}>AI Career Guidance</h2>
-              <p className={`text-gray-600 mb-6 font-medium transform transition-all duration-400 delay-300 ${
-                loaded ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
-              }`}>Chat with our intelligent assistant for personalized career advice and guidance tailored to your goals.</p>
+              </motion.div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">AI Career Guidance</h2>
+              <p className="text-gray-600 mb-6 font-medium">Chat with our intelligent assistant for personalized career advice and guidance tailored to your goals.</p>
 
               <button
                 onClick={() => setShowCornerChatbot(true)}
-                className={`w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full font-bold transform transition-transform duration-300 ease-in-out hover:scale-105 hover:from-blue-500 hover:to-blue-600 delay-350 ${
-                  loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-95'
-                }`}
+                className={`w-full ${COLORS.primary.gradient} ${COLORS.primary.gradientHover} ${RESPONSIVE.button} hover:scale-105 transition-all duration-300`}
               >
                 Start Conversation
               </button>
-            </div>
+            </motion.div>
 
             {/* Resources Card */}
-            <div className={`bg-white rounded-3xl p-8 shadow-lg text-center transform transition-all duration-500 ease-out delay-200 ${
-              loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
-            }`}>
-              <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 transform transition-all duration-400 delay-250 ${
-                loaded ? 'rotate-0 scale-100' : 'rotate-180 scale-0'
-              }`}>
+            <motion.div 
+              className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 text-center"}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
+              transition={{ delay: 0.3 }}
+            >
+              <motion.div 
+                className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6"
+                initial={{ rotate: 180, scale: 0 }}
+                animate={{ rotate: 0, scale: 1 }}
+                transition={{ delay: 0.35 }}
+              >
                 <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
-              </div>
-              <h2 className={`text-2xl font-bold text-gray-800 mb-4 transform transition-all duration-400 delay-300 ${
-                loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
-              }`}>Learning Resources</h2>
-              <p className={`text-gray-600 mb-6 font-medium transform transition-all duration-400 delay-350 ${
-                loaded ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'
-              }`}>Access curated educational content, courses, and materials to develop skills for your chosen career path.</p>
+              </motion.div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Learning Resources</h2>
+              <p className="text-gray-600 mb-6 font-medium">Access curated educational content, courses, and materials to develop skills for your chosen career path.</p>
               <Link 
                 href="/study-materials" 
-                className={`block w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-500 ease-in-out font-bold text-center transform hover:scale-105 delay-400 ${
-                  loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                }`}
+                className={`block w-full ${COLORS.primary.gradient} ${COLORS.primary.gradientHover} ${RESPONSIVE.button} text-center hover:scale-105 transition-all duration-300`}
               >
                 Explore Resources
               </Link>
-            </div>
+            </motion.div>
           </div>
 
           {/* Skills Programs Section */}
-          <div className={`bg-white rounded-3xl p-8 mb-12 shadow-lg transform transition-all duration-500 ease-out delay-250 ${
-            loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
-          }`}>
+          <motion.div 
+            className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 mb-12"}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
+            transition={{ delay: 0.4 }}
+          >
             <div className="flex flex-col lg:flex-row items-center gap-8">
               {/* Left side - Text Content */}
               <div className="flex-1 text-center lg:text-left">
@@ -230,9 +237,7 @@ export default function Home() {
                 
                 <Link 
                   href="/skills" 
-                  className={`inline-block px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full hover:from-blue-500 hover:to-blue-600 transition-all duration-300 font-bold transform hover:scale-105 delay-450 ${
-                    loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-                  }`}
+                  className={`inline-block ${COLORS.primary.gradient} ${COLORS.primary.gradientHover} ${RESPONSIVE.buttonLarge} rounded-full text-center hover:scale-105 transition-all duration-300`}
                 >
                   Explore Skill Programs →
                 </Link>
@@ -259,12 +264,15 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* How We Help Students Section */}
-          <div className={`bg-white rounded-3xl p-8 mb-12 shadow-lg transform transition-all duration-500 ease-out delay-300 ${
-            loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
-          }`}>
+          <motion.div 
+            className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 mb-12"}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
+            transition={{ delay: 0.5 }}
+          >
             <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8 transform transition-all duration-400 delay-350 ${
               loaded ? 'rotate-0 scale-100' : 'rotate-180 scale-0'
             }`}>
@@ -356,12 +364,15 @@ export default function Home() {
                 <p className="text-gray-600 text-sm font-medium">24/7 AI assistant and expert mentorship to guide you through every step of your career journey.</p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Timeline Tracker Section */}
-          <div className={`bg-white rounded-3xl p-6 mb-8 shadow-lg transform transition-all duration-500 ease-out delay-350 ${
-            loaded ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'
-          }`}>
+          <motion.div 
+            className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-6 mb-8"}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
+            transition={{ delay: 0.6 }}
+          >
             <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 transform transition-all duration-400 delay-400 ${
               loaded ? 'rotate-0 scale-100' : 'rotate-180 scale-0'
             }`}>
@@ -478,24 +489,30 @@ export default function Home() {
                 <div className="text-gray-600 text-xs">Application guidance</div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Motivational Quotes Section */}
-          <div className={`bg-white rounded-3xl p-8 mb-12 shadow-lg text-center transform transition-all duration-500 ease-out delay-200 ${
-            loaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-          }`}>
+          <motion.div 
+            className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 mb-12 text-center"}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
+            transition={{ delay: 0.7 }}
+          >
             <div className="relative h-24 flex items-center justify-center">
-              <div 
-                key={currentQuote}
-                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in"
-              >
-                <blockquote className="text-lg md:text-xl text-gray-800 font-medium text-center mb-3 px-4">
-                  "{motivationalQuotes[currentQuote].text}"
-                </blockquote>
-                <cite className="text-blue-600 font-semibold">
-                  - {motivationalQuotes[currentQuote].author}
-                </cite>
-              </div>
+              {/* This conditional check prevents the error */}
+              {motivationalQuotes[currentQuote] && (
+                <div 
+                  key={currentQuote}
+                  className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in"
+                >
+                  <blockquote className="text-lg md:text-xl text-gray-800 font-medium text-center mb-3 px-4">
+                    "{motivationalQuotes[currentQuote].text}"
+                  </blockquote>
+                  <cite className="text-blue-600 font-semibold">
+                    - {motivationalQuotes[currentQuote].author}
+                  </cite>
+                </div>
+              )}
             </div>
             <div className="flex justify-center space-x-2 mt-4">
               {motivationalQuotes.map((_, index) => (
@@ -508,7 +525,7 @@ export default function Home() {
                 />
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -534,7 +551,6 @@ export default function Home() {
         initialMessage="Hi! I'm your career guidance assistant. I can help you with course selection, career advice, and entrance exam information. What would you like to know?"
         context="Homepage career guidance"
       />
-    </div>
+    </motion.div>
   );
 }
-

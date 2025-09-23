@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { Navbar } from "@/components/navbar";
 import Link from "next/link";
 import { ClientDatabaseService as DatabaseService } from "@/lib/client-database";
 
@@ -285,7 +284,6 @@ export default function RecommendationsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <Navbar />
         <div className="pt-20 flex items-center justify-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
         </div>
@@ -299,8 +297,6 @@ export default function RecommendationsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navbar />
-      
       <div className="pt-20 px-8 pb-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}

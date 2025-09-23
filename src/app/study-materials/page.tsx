@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Navbar } from "@/components/navbar";
 import HeroSection from "@/components/HeroSection";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -129,7 +128,6 @@ export default function StudyMaterialsPage() {
   // ✅ The UI part of your component is here
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
-      <Navbar />
       {/* Hero Section */}
       <HeroSection
         title="Study Materials"

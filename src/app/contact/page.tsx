@@ -1,5 +1,4 @@
 "use client";
-import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { useState, useEffect } from "react";
 
@@ -55,7 +54,6 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navbar />
       
       <HeroSection 
         title="Contact Us"

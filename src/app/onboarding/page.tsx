@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { updateProfile } from "firebase/auth";
+// Supabase auth; placeholder for updating user metadata if needed later
+import { supabase } from "@/lib/supabaseClient";
 import { ClientDatabaseService } from "@/lib/client-database";
 import { validateAndConvertFormData } from "@/lib/enum-converters";
 
@@ -110,12 +111,8 @@ export default function OnboardingPage() {
         throw new Error("User not authenticated");
       }
 
-      // Update user display name if changed
-      if (formData.fullName !== user.displayName) {
-        await updateProfile(user, {
-          displayName: formData.fullName
-        });
-      }
+      // Update user display name if changed (Supabase: store in your profile table later)
+      // You can sync to Supabase user metadata if desired.
 
       // Save user profile data to database
       const convertedData = validateAndConvertFormData({

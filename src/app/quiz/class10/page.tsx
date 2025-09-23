@@ -1,150 +1,330 @@
 "use client";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/HeroSection";
 import Link from "next/link";
-import { supabase } from "@/lib/supabaseClient"; // Adjust path if needed
+import { fetchQuizQuestions, saveQuizResult } from "@/lib/supabaseClient";
+import { useAuth } from "@/contexts/AuthContext";
 
-// Interfaces remain the same
 interface Question {
-  id: number;
-  question: string;
+  id: string;
+  question_text: string;
   options: string[];
+  correct_answer: number;
   category: string;
 }
 
 interface QuizResult {
   category: string;
   score: number;
+  totalQuestions: number;
+  percentage: number;
   careers: string[];
   description: string;
+  recommendations: string[];
 }
 
-export default function Class10Quiz() {
-  // State for quiz data fetched from Supabase
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [careerResults, setCareerResults] = useState<Record<string, Omit<QuizResult, 'score'>>>(
-    {}
-  );
-  
-  // State for component lifecycle and UI
-  const [isLoading, setIsLoading] = useState(true);
-  const [loaded, setLoaded] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+// Animation variants
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 }
+};
 
-  // State for quiz progress
+const cardVariants = {
+  initial: { opacity: 0, scale: 0.95, y: 20 },
+  animate: { 
+    opacity: 1, 
+    scale: 1, 
+    y: 0
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.95, 
+    y: -20
+  }
+};
+
+const questionVariants = {
+  initial: { opacity: 0, x: 50 },
+  animate: { 
+    opacity: 1, 
+    x: 0
+  },
+  exit: { 
+    opacity: 0, 
+    x: -50
+  }
+};
+
+const optionVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { 
+      delay: i * 0.1,
+      duration: 0.4
+    }
+  }),
+  hover: { 
+    scale: 1.02,
+    y: -2
+  },
+  tap: { scale: 0.98 }
+};
+
+const progressVariants = {
+  initial: { width: "0%" },
+  animate: (progress: number) => ({
+    width: `${progress}%`
+  })
+};
+
+const resultVariants = {
+  initial: { opacity: 0, scale: 0.8 },
+  animate: {
+    opacity: 1,
+    scale: 1
+  }
+};
+
+const resultItemVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4 }
+  }
+};
+
+export default function Class10Quiz() {
+  const { user } = useAuth();
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  // Quiz state
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<QuizResult | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
-    // Fetches all necessary data from Supabase when the component mounts
-    const fetchData = async () => {
-      // Fetch questions and their options (using Class 10 tables)
-      const { data: questionsData, error: questionsError } = await supabase
-        .from('questions')
-        .select(`id, question_text, category, question_options (option_text, option_index)`)
-        .order('id', { ascending: true });
+    const loadQuestions = async () => {
+      try {
+        setIsLoading(true);
+        // Mock questions for Class 10 students
+        const mockQuestions: Question[] = [
+          {
+            id: '1',
+            question_text: 'Which subject do you enjoy the most?',
+            options: ['Mathematics', 'Science', 'History', 'Literature'],
+            correct_answer: 0,
+            category: 'interest'
+          },
+          {
+            id: '2',
+            question_text: 'What type of activities do you prefer?',
+            options: ['Problem solving', 'Creative writing', 'Experiments', 'Reading'],
+            correct_answer: 0,
+            category: 'activity'
+          },
+          {
+            id: '3',
+            question_text: 'Which career field interests you most?',
+            options: ['Technology', 'Medicine', 'Business', 'Arts'],
+            correct_answer: 0,
+            category: 'career'
+          },
+          {
+            id: '4',
+            question_text: 'How do you prefer to work?',
+            options: ['Independently', 'In teams', 'With guidance', 'Leading others'],
+            correct_answer: 0,
+            category: 'work_style'
+          },
+          {
+            id: '5',
+            question_text: 'What motivates you the most?',
+            options: ['Solving complex problems', 'Helping others', 'Creating new things', 'Achieving goals'],
+            correct_answer: 0,
+            category: 'motivation'
+          }
+        ];
 
-      if (questionsError) {
-        console.error("Error fetching questions:", questionsError);
-        return setIsLoading(false);
+        try {
+          const data = await fetchQuizQuestions(10);
+          if (data && data.length > 0) {
+            setQuestions(data);
+          } else {
+            setQuestions(mockQuestions);
+          }
+        } catch (error) {
+          console.log('Using mock data due to error:', error);
+          setQuestions(mockQuestions);
+        }
+
+      } catch (error) {
+        console.error('Error loading questions:', error);
+        setError('Failed to load quiz questions');
+      } finally {
+        setIsLoading(false);
+        setTimeout(() => setLoaded(true), 100);
       }
-
-      const formattedQuestions: Question[] = questionsData.map((q: any) => ({
-        id: q.id,
-        question: q.question_text,
-        category: q.category,
-        options: q.question_options
-          .sort((a: any, b: any) => a.option_index - b.option_index)
-          .map((opt: any) => opt.option_text),
-      }));
-      setQuestions(formattedQuestions);
-      
-      // Fetch career categories and their recommended careers (using Class 10 tables)
-      const { data: categoriesData, error: categoriesError } = await supabase
-        .from('career_categories')
-        .select(`key_name, display_name, description, recommended_careers (career_name)`);
-
-      if (categoriesError) {
-        console.error("Error fetching career data:", categoriesError);
-        return setIsLoading(false);
-      }
-      
-      const formattedResults = categoriesData.reduce((acc, cat: any) => {
-        acc[cat.key_name] = {
-          category: cat.display_name,
-          description: cat.description,
-          careers: cat.recommended_careers.map((c: any) => c.career_name),
-        };
-        return acc;
-      }, {} as Record<string, Omit<QuizResult, 'score'>>);
-
-      setCareerResults(formattedResults);
-      setIsLoading(false);
     };
 
-    fetchData();
-    const timer = setTimeout(() => setLoaded(true), 100);
-    return () => clearTimeout(timer);
+    loadQuestions();
   }, []);
 
-  // --- ICON HELPER FUNCTIONS (No changes needed) ---
-  const getQuestionIcon = (category: string) => {
-    switch (category) {
-      case 'interest': return <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>;
-      case 'academic': return <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>;
-      case 'environment': return <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>;
-      case 'motivation': return <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>;
-      case 'skill': return <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>;
-      case 'lifestyle': return <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m0 0V9a3 3 0 013-3h2.343M9 10H6a3 3 0 00-3 3v4a3 3 0 003 3h8a3 3 0 003-3v-1" /></svg>;
-      default: return <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
-    }
-  };
-  const getOptionIcon = (option: string, index: number) => { /* Function can be copied from previous version */ return <svg key={index} className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>; };
+  // Calculate results based on answers
+  const calculateResults = (userAnswers: number[]): QuizResult => {
+    const categoryScores: Record<string, number> = {};
+    const totalQuestions = questions.length;
+    let correctAnswers = 0;
 
-  // --- QUIZ LOGIC (No changes needed) ---
-  const handleAnswer = (optionIndex: number) => {
-    const newAnswers = [...answers, optionIndex];
-    setAnswers(newAnswers);
-    setIsTransitioning(true);
-
-    setTimeout(() => {
-      if (currentQuestion < questions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
-      } else {
-        calculateResults(newAnswers);
+    // Calculate scores
+    questions.forEach((question, index) => {
+      const userAnswer = userAnswers[index];
+      const category = question.category;
+      
+      if (!categoryScores[category]) {
+        categoryScores[category] = 0;
       }
-      setIsTransitioning(false);
-    }, 300);
-  };
-
-  const calculateResults = (userAnswers: number[]) => {
-    const scores = { technology: 0, healthcare: 0, creative: 0, analytical: 0 };
-    userAnswers.forEach((answer, index) => {
-      switch (index) {
-        case 0: if (answer === 0) scores.technology += 3; if (answer === 1) scores.healthcare += 3; if (answer === 2) scores.creative += 3; if (answer === 3) scores.analytical += 3; break;
-        case 1: if (answer === 0) scores.analytical += 2; if (answer === 1) scores.creative += 2; if (answer === 2) scores.healthcare += 2; if (answer === 3) scores.creative += 3; break;
-        case 2: if (answer === 0) scores.healthcare += 1; if (answer === 1) scores.analytical += 2; if (answer === 2) scores.creative += 3; if (answer === 3) scores.technology += 3; break;
-        case 3: if (answer === 0) scores.healthcare += 3; if (answer === 1) scores.analytical += 2; if (answer === 2) scores.creative += 3; if (answer === 3) scores.technology += 2; break;
-        case 4: if (answer === 0) scores.technology += 3; if (answer === 1) scores.analytical += 2; if (answer === 2) scores.creative += 3; if (answer === 3) scores.healthcare += 3; break;
-        case 5: if (answer === 0) scores.technology += 2; if (answer === 1) scores.analytical += 1; if (answer === 2) scores.creative += 3; if (answer === 3) scores.healthcare += 2; break;
-        case 6: if (answer === 0) scores.technology += 3; if (answer === 1) scores.analytical += 2; if (answer === 2) scores.creative += 3; if (answer === 3) scores.healthcare += 1; break;
-        case 7: if (answer === 0) scores.technology += 3; if (answer === 1) scores.healthcare += 3; if (answer === 2) scores.creative += 2; if (answer === 3) scores.analytical += 3; break;
+      
+      // Award points based on answer choice (simplified scoring)
+      categoryScores[category] += userAnswer + 1;
+      
+      // Check if answer is correct (if we have correct answers)
+      if (question.correct_answer !== undefined && userAnswer === question.correct_answer) {
+        correctAnswers++;
       }
     });
 
-    const topCategory = Object.keys(scores).reduce((a, b) =>
-      scores[a as keyof typeof scores] > scores[b as keyof typeof scores] ? a : b
+    // Determine top category
+    const topCategory = Object.keys(categoryScores).reduce((a, b) =>
+      categoryScores[a] > categoryScores[b] ? a : b
     );
+
+    // Generate recommendations based on top category
+    const recommendations = generateRecommendations(topCategory, categoryScores);
     
-    const resultData = careerResults[topCategory];
-    if (resultData) {
-        const finalResult = { ...resultData, score: scores[topCategory as keyof typeof scores] };
-        setResults(finalResult);
+    const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+
+    return {
+      category: recommendations.category,
+      score: correctAnswers,
+      totalQuestions,
+      percentage,
+      careers: recommendations.careers,
+      description: recommendations.description,
+      recommendations: recommendations.recommendations
+    };
+  };
+
+  const generateRecommendations = (topCategory: string, scores: Record<string, number>) => {
+    const categoryMap: Record<string, any> = {
+      interest: {
+        category: 'STEM Fields',
+        careers: ['Engineer', 'Data Scientist', 'Researcher', 'Software Developer'],
+        description: 'You show strong interest in analytical and technical subjects. STEM careers would be an excellent fit for your interests.',
+        recommendations: [
+          'Focus on Mathematics and Science subjects',
+          'Participate in science fairs and coding competitions',
+          'Consider engineering entrance exam preparation',
+          'Explore internships in tech companies'
+        ]
+      },
+      activity: {
+        category: 'Creative & Analytical',
+        careers: ['Architect', 'Graphic Designer', 'Marketing Analyst', 'Product Manager'],
+        description: 'You enjoy both creative and analytical activities. Consider careers that blend creativity with problem-solving.',
+        recommendations: [
+          'Develop both technical and creative skills',
+          'Explore design and analytics courses',
+          'Build a portfolio of creative projects',
+          'Consider business and design programs'
+        ]
+      },
+      career: {
+        category: 'Technology & Innovation',
+        careers: ['Software Engineer', 'Cybersecurity Analyst', 'AI/ML Engineer', 'Tech Entrepreneur'],
+        description: 'Your interest in technology suggests a bright future in the tech industry. Consider specializing in emerging technologies.',
+        recommendations: [
+          'Learn programming languages',
+          'Stay updated with latest tech trends',
+          'Participate in hackathons and tech competitions',
+          'Consider computer science or related fields'
+        ]
+      },
+      work_style: {
+        category: 'Leadership & Management',
+        careers: ['Project Manager', 'Business Analyst', 'Consultant', 'Team Lead'],
+        description: 'Your work style indicates leadership potential. Consider careers where you can guide teams and projects.',
+        recommendations: [
+          'Develop communication and leadership skills',
+          'Take on leadership roles in school projects',
+          'Consider business management courses',
+          'Learn project management methodologies'
+        ]
+      },
+      motivation: {
+        category: 'Problem Solving & Innovation',
+        careers: ['Research Scientist', 'Innovation Manager', 'Systems Analyst', 'Strategy Consultant'],
+        description: 'Your motivation for problem-solving suggests careers in research and strategic thinking would suit you well.',
+        recommendations: [
+          'Engage in research projects',
+          'Develop critical thinking skills',
+          'Consider science or engineering research',
+          'Explore strategy and consulting roles'
+        ]
+      }
+    };
+
+    return categoryMap[topCategory] || categoryMap.interest;
+  };
+
+  const handleAnswer = async (optionIndex: number) => {
+    if (isTransitioning) return;
+    
+    setIsTransitioning(true);
+    const newAnswers = [...answers, optionIndex];
+    setAnswers(newAnswers);
+
+    // Wait for exit animation
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      // Calculate and show results
+      const quizResult = calculateResults(newAnswers);
+      setResults(quizResult);
+      
+      // Save results to Supabase if user is logged in
+      if (user) {
+        try {
+          await saveQuizResult({
+            user_id: user.id,
+            class_level: 10,
+            score: quizResult.score,
+            total_questions: quizResult.totalQuestions,
+            answers: newAnswers,
+            category_scores: {},
+            recommendations: quizResult.recommendations
+          });
+        } catch (error) {
+          console.error('Error saving quiz result:', error);
+        }
+      }
+      
+      setShowResults(true);
     }
-    setShowResults(true);
+    
+    setIsTransitioning(false);
   };
 
   const restartQuiz = () => {
@@ -154,95 +334,367 @@ export default function Class10Quiz() {
     setResults(null);
   };
 
-  // --- RENDER LOGIC ---
+  // Loading state
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-100"><div className="text-xl font-semibold text-gray-700">Loading Quiz...</div></div>;
+    return (
+      <motion.div 
+        className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen pt-16">
+          <motion.div
+            className="text-center"
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.div
+              className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div
+              className="text-xl font-semibold text-gray-700"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              Loading Quiz...
+            </motion.div>
+          </motion.div>
+        </div>
+      </motion.div>
+    );
   }
 
+  // Error state
+  if (error) {
+    return (
+      <motion.div 
+        className="min-h-screen bg-gradient-to-br from-gray-50 via-red-50 to-gray-100"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen pt-16">
+          <motion.div
+            className="text-center p-8 bg-white rounded-2xl shadow-lg"
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+          >
+            <div className="text-red-600 text-xl font-semibold mb-4">Error loading quiz</div>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <Link href="/" className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
+              Go Home
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
+    <motion.div 
+      className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100"
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <Navbar />
       <HeroSection 
         title={showResults ? "Your Quiz Results" : "Class 10 Career Assessment"}
         subtitle={showResults ? "Here's what we recommend based on your answers" : "Discover your career interests and potential paths after Class 10"}
         loaded={loaded}
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-16">
         <div className="max-w-4xl mx-auto">
-          {showResults && results ? (
-            // ========== RESULTS CARD ==========
-            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6"><svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
-                <h2 className="text-3xl font-bold text-gray-800 mb-4">Your Best Match:</h2>
-                <h3 className="text-2xl font-semibold text-blue-600 mb-6">{results.category}</h3>
-                <p className="text-lg text-gray-700 mb-8">{results.description}</p>
-              </div>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-white/50 rounded-2xl p-6"><h4 className="text-xl font-semibold text-gray-800 mb-4">Recommended Careers:</h4><ul className="space-y-2">{results.careers.map((career, i) => <li key={i} className="flex items-center text-gray-700"><div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>{career}</li>)}</ul></div>
-                <div className="bg-white/50 rounded-2xl p-6"><h4 className="text-xl font-semibold text-gray-800 mb-4">Next Steps:</h4><ul className="space-y-3 text-gray-700"><li>• Focus on subjects related to your career interest</li><li>• Talk to professionals in these fields</li><li>• Look for internship or volunteer opportunities</li><li>• Consider relevant courses after Class 10</li><li>• Discuss with parents and career counselors</li></ul></div>
-              </div>
-              <div className="text-center mt-12 space-x-4">
-                <button onClick={restartQuiz} className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-semibold">Retake Quiz</button>
-                <Link href="/career-paths" className="inline-block px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:to-blue-700 transition-all duration-300 font-semibold">Explore Career Paths</Link>
-                <Link href="/" className="inline-block px-8 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-full hover:from-gray-600 hover:to-gray-700 transition-all duration-300 font-semibold">Back to Home</Link>
-              </div>
-            </div>
-          ) : (
-            // ========== QUIZ CARD (with new animations) ==========
-            <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg transition-all duration-500 ${isTransitioning ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
-              {questions.length > 0 ? (
-                <>
-                  <div className="mb-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-sm font-medium text-gray-600">Question {currentQuestion + 1} of {questions.length}</span>
-                      <span className="text-sm font-medium text-blue-600">{Math.round(((currentQuestion + 1) / questions.length) * 100)}% Complete</span>
-                    </div>
-                    {/* Animated Progress Bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
-                      <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-300 relative" style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}>
-                        <div className="absolute top-0 left-0 w-full h-full bg-white/20 animate-pulse"></div>
+          <AnimatePresence mode="wait">
+            {showResults && results ? (
+              // Results Card
+              <motion.div
+                key="results"
+                className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg"
+                variants={resultVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <motion.div className="text-center mb-8" variants={resultItemVariants}>
+                  <motion.div 
+                    className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6"
+                    whileHover={{ scale: 1.1, rotate: 10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </motion.div>
+                  <motion.h2 
+                    className="text-3xl font-bold text-gray-800 mb-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    Your Best Match:
+                  </motion.h2>
+                  <motion.h3 
+                    className="text-2xl font-semibold text-blue-600 mb-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    {results.category}
+                  </motion.h3>
+                  <motion.div
+                    className="text-lg font-medium text-gray-700 mb-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    Score: {results.score}/{results.totalQuestions} ({results.percentage}%)
+                  </motion.div>
+                  <motion.p 
+                    className="text-lg text-gray-700 mb-8"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    {results.description}
+                  </motion.p>
+                </motion.div>
+
+                <motion.div 
+                  className="grid md:grid-cols-2 gap-8"
+                  variants={resultItemVariants}
+                >
+                  <motion.div 
+                    className="bg-white/50 rounded-2xl p-6"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <h4 className="text-xl font-semibold text-gray-800 mb-4">Recommended Careers:</h4>
+                    <motion.ul className="space-y-2">
+                      {results.careers.map((career, i) => (
+                        <motion.li 
+                          key={i} 
+                          className="flex items-center text-gray-700"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.6 + i * 0.1 }}
+                        >
+                          <motion.div 
+                            className="w-2 h-2 bg-blue-600 rounded-full mr-3"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.7 + i * 0.1 }}
+                          />
+                          {career}
+                        </motion.li>
+                      ))}
+                    </motion.ul>
+                  </motion.div>
+
+                  <motion.div 
+                    className="bg-white/50 rounded-2xl p-6"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <h4 className="text-xl font-semibold text-gray-800 mb-4">Next Steps:</h4>
+                    <motion.ul className="space-y-3 text-gray-700">
+                      {results.recommendations.map((step, i) => (
+                        <motion.li 
+                          key={i}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.8 + i * 0.1 }}
+                        >
+                          • {step}
+                        </motion.li>
+                      ))}
+                    </motion.ul>
+                  </motion.div>
+                </motion.div>
+
+                <motion.div 
+                  className="text-center mt-12 space-x-4"
+                  variants={resultItemVariants}
+                >
+                  <motion.button
+                    onClick={restartQuiz}
+                    className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-semibold"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Retake Quiz
+                  </motion.button>
+                  <Link href="/career-paths">
+                    <motion.span
+                      className="inline-block px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:to-blue-700 transition-all duration-300 font-semibold"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Explore Career Paths
+                    </motion.span>
+                  </Link>
+                  <Link href="/">
+                    <motion.span
+                      className="inline-block px-8 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-full hover:from-gray-600 hover:to-gray-700 transition-all duration-300 font-semibold"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Back to Home
+                    </motion.span>
+                  </Link>
+                </motion.div>
+              </motion.div>
+            ) : (
+              // Quiz Card
+              <motion.div
+                key="quiz"
+                className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg"
+                variants={cardVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                {questions.length > 0 ? (
+                  <>
+                    {/* Progress Section */}
+                    <motion.div className="mb-6" layout>
+                      <div className="flex justify-between items-center mb-4">
+                        <motion.span 
+                          className="text-sm font-medium text-gray-600"
+                          key={`question-${currentQuestion}`}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                        >
+                          Question {currentQuestion + 1} of {questions.length}
+                        </motion.span>
+                        <motion.span 
+                          className="text-sm font-medium text-blue-600"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                        >
+                          {Math.round(progress)}% Complete
+                        </motion.span>
                       </div>
-                    </div>
-                    {/* Progress Dots with new color */}
-                    <div className="flex justify-center space-x-2 mt-4">
-                      {questions.map((_, index) => (
-                        <div key={index} className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                          index === currentQuestion ? 'bg-blue-600 scale-125' : 
-                          index < currentQuestion ? 'bg-blue-400' : 'bg-gray-300'
-                        }`} />
-                      ))}
-                    </div>
-                  </div>
-                  <div className={`mb-8 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-                    <div className="flex items-center mb-6">
-                      {getQuestionIcon(questions[currentQuestion].category)}
-                      <h2 className="text-2xl font-bold text-gray-800 ml-3">{questions[currentQuestion].question}</h2>
-                    </div>
-                    <div className="space-y-4">
-                      {questions[currentQuestion].options.map((option, index) => (
-                        <button key={index} onClick={() => handleAnswer(index)} disabled={isTransitioning} className={`w-full p-4 text-left bg-white/50 hover:bg-white/80 rounded-2xl transition-all duration-300 border border-gray-200 hover:border-blue-300 hover:shadow-md hover:scale-[1.02] group ${isTransitioning ? 'cursor-not-allowed opacity-50' : ''}`}>
-                          <div className="flex items-start">
-                            <div className="w-8 h-8 bg-gray-100 rounded-full mr-4 flex items-center justify-center mt-1 group-hover:bg-blue-50 transition-colors duration-200">
-                              {getOptionIcon(option, index)}
-                            </div>
-                            <span className="text-gray-700 font-medium flex-1">{option}</span>
-                            <div className="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center mt-1 group-hover:border-blue-400 transition-colors duration-200">
-                              <div className="w-2 h-2 bg-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                            </div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center text-gray-600">Failed to load quiz questions. Please try again later.</div>
-              )}
-            </div>
-          )}
+
+                      {/* Animated Progress Bar */}
+                      <div className="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
+                        <motion.div
+                          className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full relative"
+                          variants={progressVariants}
+                          initial="initial"
+                          animate="animate"
+                          custom={progress}
+                        >
+                          <motion.div
+                            className="absolute top-0 left-0 w-full h-full bg-white/20"
+                            animate={{ x: ["0%", "100%", "0%"] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                          />
+                        </motion.div>
+                      </div>
+
+                      {/* Progress Dots */}
+                      <div className="flex justify-center space-x-2 mt-4">
+                        {questions.map((_, index) => (
+                          <motion.div
+                            key={index}
+                            className={`w-2 h-2 rounded-full ${
+                              index === currentQuestion ? 'bg-blue-600' : 
+                              index < currentQuestion ? 'bg-blue-400' : 'bg-gray-300'
+                            }`}
+                            animate={{
+                              scale: index === currentQuestion ? 1.25 : 1,
+                            }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+
+                    {/* Question Section */}
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentQuestion}
+                        variants={questionVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        className="mb-8"
+                      >
+                        <motion.h2 
+                          className="text-2xl font-bold text-gray-800 mb-6"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.2 }}
+                        >
+                          {questions[currentQuestion].question_text}
+                        </motion.h2>
+
+                        <div className="space-y-4">
+                          {questions[currentQuestion].options.map((option, index) => (
+                            <motion.button
+                              key={index}
+                              onClick={() => handleAnswer(index)}
+                              disabled={isTransitioning}
+                              className={`w-full p-4 text-left bg-white/50 hover:bg-white/80 rounded-2xl transition-all duration-300 border border-gray-200 hover:border-blue-300 hover:shadow-md group ${
+                                isTransitioning ? 'cursor-not-allowed opacity-50' : ''
+                              }`}
+                              variants={optionVariants}
+                              initial="initial"
+                              animate="animate"
+                              whileHover="hover"
+                              whileTap="tap"
+                              custom={index}
+                            >
+                              <div className="flex items-start">
+                                <motion.div 
+                                  className="w-8 h-8 bg-gray-100 rounded-full mr-4 flex items-center justify-center mt-1 group-hover:bg-blue-50 transition-colors duration-200"
+                                  whileHover={{ scale: 1.1 }}
+                                >
+                                  <motion.div
+                                    className="w-4 h-4 border-2 border-gray-400 rounded-full group-hover:border-blue-500"
+                                    whileHover={{ borderWidth: "3px" }}
+                                  />
+                                </motion.div>
+                                <span className="text-gray-700 font-medium flex-1">{option}</span>
+                                <motion.div 
+                                  className="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center mt-1 group-hover:border-blue-400 transition-colors duration-200"
+                                  whileHover={{ scale: 1.1 }}
+                                >
+                                  <motion.div
+                                    className="w-2 h-2 bg-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                    whileHover={{ scale: 1.2 }}
+                                  />
+                                </motion.div>
+                              </div>
+                            </motion.button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    </AnimatePresence>
+                  </>
+                ) : (
+                  <motion.div 
+                    className="text-center text-gray-600"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    No quiz questions available. Please try again later.
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

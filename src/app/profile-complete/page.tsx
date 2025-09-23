@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Navbar } from "@/components/navbar";
 import { useRouter } from "next/navigation";
 
 export default function ProfileComplete() {
@@ -33,7 +32,6 @@ export default function ProfileComplete() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 relative">
-      <Navbar />
       
       <div className="pt-20 px-8">
         <div className="max-w-4xl mx-auto">

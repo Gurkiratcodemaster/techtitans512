@@ -1,14 +1,11 @@
 // /app/chatbot/page.tsx
 "use client";
-import { Navbar } from "@/components/navbar";
 import Chatbot from "@/components/chatbot";
 import { HeroSection } from "@/components/HeroSection";
 
 export default function ChatbotPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
-      <Navbar />
-      
       <HeroSection 
         title="AI Career Guidance"
         subtitle="Get personalized career advice and guidance from our intelligent assistant"

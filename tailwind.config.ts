@@ -38,6 +38,9 @@ const config: Config = {
         '800': '800ms',
         '900': '900ms',
       },
+      fontFamily: {
+        'poppins': ['Poppins', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+      },
     },
   },
   plugins: [],

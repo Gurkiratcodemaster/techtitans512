@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Navbar } from "@/components/navbar";
 import dynamic from 'next/dynamic';
 
 // Dynamically import the Enhanced D3 component to avoid SSR issues
@@ -45,7 +44,6 @@ export default function CareerResultsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navbar />
       
       <div className="pt-20 px-8">
         <div className="max-w-4xl mx-auto">

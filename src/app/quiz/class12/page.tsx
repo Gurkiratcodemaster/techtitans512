@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/HeroSection";
 import Link from "next/link";
-import { supabase } from "@/lib/supabaseClient"; // Ensure this path is correct
+import { supabase } from "@/lib/supabaseClient";
+import { COLORS, BACKGROUNDS, RESPONSIVE, ANIMATIONS } from "@/lib/theme";
 
 // Defines the structure for a single quiz question
 interface Question {
@@ -21,6 +23,24 @@ interface QuizResult {
   description: string;
   colleges: string[];
 }
+
+// Animation variants
+const cardVariants = {
+  initial: { opacity: 0, scale: 0.95, y: 20 },
+  animate: { opacity: 1, scale: 1, y: 0 },
+  exit: { opacity: 0, scale: 0.95, y: -20 }
+};
+
+const questionVariants = {
+  initial: { opacity: 0, x: 50 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -50 }
+};
+
+const resultVariants = {
+  initial: { opacity: 0, scale: 0.8 },
+  animate: { opacity: 1, scale: 1 }
+};
 
 export default function Class12Quiz() {
   // State for quiz data fetched from Supabase
@@ -153,53 +173,273 @@ export default function Class12Quiz() {
     setResults(null);
   };
 
-  // --- RENDER LOGIC ---
+  // Loading state
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-100"><div className="text-xl font-semibold text-gray-700">Loading Quiz...</div></div>;
+    return (
+      <motion.div 
+        className={BACKGROUNDS.page + " min-h-screen"}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen pt-16">
+          <motion.div
+            className="text-center"
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.div
+              className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div
+              className="text-xl font-semibold text-gray-700"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              Loading Quiz...
+            </motion.div>
+          </motion.div>
+        </div>
+      </motion.div>
+    );
   }
 
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
+    <motion.div 
+      className={BACKGROUNDS.page + " min-h-screen"}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
       <Navbar />
       <HeroSection 
         title={showResults ? "Your Quiz Results" : "Class 12 Career Assessment"}
-        subtitle={showResults ? "Here is your ideal career path based on your answers" : "Discover your ideal career path and college options after Class 12"}
+        subtitle={showResults ? "Here's your ideal career path based on your answers" : "Discover your career path and college options after Class 12"}
         loaded={loaded}
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-5xl mx-auto">
-          {showResults && results ? (
-            // ========== RESULTS CARD ==========
-            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6"><svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg></div>
-                <h2 className="text-3xl font-bold text-gray-800 mb-4">Your Ideal Career Path:</h2>
-                <h3 className="text-2xl font-semibold text-blue-600 mb-6">{results.category}</h3>
-                <p className="text-lg text-gray-700 mb-8">{results.description}</p>
-              </div>
-              <div className="grid lg:grid-cols-3 gap-8 mb-8">
-                <div className="bg-white/50 rounded-2xl p-6"><h4 className="text-xl font-semibold text-gray-800 mb-4">Top Career Options:</h4><ul className="space-y-2">{results.careers.map((career, i) => <li key={i} className="flex items-center text-gray-700"><div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>{career}</li>)}</ul></div>
-                <div className="bg-white/50 rounded-2xl p-6"><h4 className="text-xl font-semibold text-gray-800 mb-4">Top Colleges/Institutes:</h4><ul className="space-y-2">{results.colleges.map((college, i) => <li key={i} className="flex items-center text-gray-700"><div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>{college}</li>)}</ul></div>
-                <div className="bg-white/50 rounded-2xl p-6"><h4 className="text-xl font-semibold text-gray-800 mb-4">Next Steps:</h4><ul className="space-y-2 text-gray-700"><li>• Research entrance exams</li><li>• Start intensive preparation</li><li>• Take coaching if needed</li><li>• Apply for relevant colleges</li><li>• Build relevant skill portfolio</li><li>• Network with professionals</li></ul></div>
-              </div>
-              <div className="text-center mt-8 space-x-4">
-                <button onClick={restartQuiz} className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-semibold">Retake Quiz</button>
-                <Link href="/career-results" className="inline-block px-8 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-full hover:from-indigo-600 hover:to-indigo-700 transition-all duration-300 font-semibold">View Career Paths</Link>
-                <Link href="/" className="inline-block px-8 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-full hover:from-gray-600 hover:to-gray-700 transition-all duration-300 font-semibold">Back to Home</Link>
-              </div>
-            </div>
-          ) : (
-            // ========== QUIZ CARD ==========
-            <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg transition-all duration-500 ${isTransitioning ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}`}>
-              <div className="mb-6"><div className="flex justify-between items-center mb-4"><span className="text-sm font-medium text-gray-600">Question {currentQuestion + 1} of {questions.length}</span><span className="text-sm font-medium text-blue-600">{Math.round(((currentQuestion + 1) / questions.length) * 100)}% Complete</span></div><div className="w-full bg-gray-200 rounded-full h-3"><div className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-300" style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}></div></div><div className="flex justify-center space-x-2 mt-4">{questions.map((_, i) => <div key={i} className={`w-2 h-2 rounded-full t-a d-300 ${i === currentQuestion ? 'bg-blue-600 scale-125' : i < currentQuestion ? 'bg-green-500' : 'bg-gray-300'}`}></div>)}</div></div>
-              <div className="mb-8">
-                <div className="flex items-center mb-6">{getQuestionIcon(questions[currentQuestion]?.category)}<h2 className="text-2xl font-bold text-gray-800 ml-3">{questions[currentQuestion]?.question}</h2></div>
-                <div className="space-y-4">{questions[currentQuestion]?.options.map((option, index) => <button key={index} onClick={() => handleAnswer(index)} disabled={isTransitioning} className={`w-full p-4 text-left bg-white/50 hover:bg-white/80 rounded-2xl t-a d-300 border border-gray-200 hover:border-blue-300 hover:shadow-md hover:scale-[1.02] group ${isTransitioning ? 'cursor-not-allowed opacity-50' : ''}`}><div className="flex items-start"><div className="w-8 h-8 bg-gray-100 rounded-full mr-4 flex items-center justify-center mt-1 group-hover:bg-blue-50 t-c d-200">{getOptionIcon(option, index)}</div><span className="text-gray-700 font-medium flex-1">{option}</span><div className="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center mt-1 group-hover:border-blue-400 t-c d-200"><div className="w-2 h-2 bg-blue-600 rounded-full opacity-0 group-hover:opacity-100 t-o d-200"></div></div></div></button>)}</div>
-              </div>
-            </div>
-          )}
+      
+      <div className={RESPONSIVE.container + " " + RESPONSIVE.section}>
+        <div className="max-w-4xl mx-auto">
+          <AnimatePresence mode="wait">
+            {showResults && results ? (
+              // Results Card
+              <motion.div
+                key="results"
+                className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8"}
+                variants={resultVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <motion.div className="text-center mb-8">
+                  <motion.div 
+                    className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6"
+                    whileHover={{ scale: 1.1, rotate: 10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                    </svg>
+                  </motion.div>
+                  <h2 className="text-3xl font-bold text-gray-800 mb-4">Your Ideal Career Path:</h2>
+                  <h3 className="text-2xl font-semibold text-blue-600 mb-6">{results.category}</h3>
+                  <p className="text-lg text-gray-700 mb-8">{results.description}</p>
+                </motion.div>
+
+                <div className="grid md:grid-cols-3 gap-6 mb-8">
+                  <motion.div 
+                    className="bg-white/50 rounded-2xl p-6"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <h4 className="text-xl font-semibold text-gray-800 mb-4">Top Career Options:</h4>
+                    <ul className="space-y-2">
+                      {results.careers.map((career, i) => (
+                        <motion.li 
+                          key={i} 
+                          className="flex items-center text-gray-700"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.1 }}
+                        >
+                          <div className="w-2 h-2 bg-blue-600 rounded-full mr-3" />
+                          {career}
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+
+                  <motion.div 
+                    className="bg-white/50 rounded-2xl p-6"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <h4 className="text-xl font-semibold text-gray-800 mb-4">Recommended Colleges:</h4>
+                    <ul className="space-y-2">
+                      {results.colleges.map((college, i) => (
+                        <motion.li 
+                          key={i} 
+                          className="flex items-center text-gray-700"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.1 }}
+                        >
+                          <div className="w-2 h-2 bg-blue-600 rounded-full mr-3" />
+                          {college}
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </motion.div>
+
+                  <motion.div 
+                    className="bg-white/50 rounded-2xl p-6"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <h4 className="text-xl font-semibold text-gray-800 mb-4">Next Steps:</h4>
+                    <ul className="space-y-2 text-gray-700">
+                      <li>• Research entrance exams</li>
+                      <li>• Start intensive preparation</li>
+                      <li>• Take coaching if needed</li>
+                      <li>• Apply for relevant colleges</li>
+                      <li>• Build skill portfolio</li>
+                      <li>• Network with professionals</li>
+                    </ul>
+                  </motion.div>
+                </div>
+
+                <motion.div className="text-center space-x-4">
+                  <motion.button
+                    onClick={restartQuiz}
+                    className={COLORS.primary.gradient + " " + COLORS.primary.gradientHover + " " + RESPONSIVE.button}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Retake Quiz
+                  </motion.button>
+                  <Link href="/career-paths">
+                    <motion.span
+                      className={COLORS.primary.gradient + " " + COLORS.primary.gradientHover + " " + RESPONSIVE.button + " inline-block"}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Explore Career Paths
+                    </motion.span>
+                  </Link>
+                </motion.div>
+              </motion.div>
+            ) : (
+              // Quiz Card
+              <motion.div
+                key="quiz"
+                className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8"}
+                variants={cardVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                {questions.length > 0 ? (
+                  <>
+                    {/* Progress Section */}
+                    <div className="mb-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <span className="text-sm font-medium text-gray-600">
+                          Question {currentQuestion + 1} of {questions.length}
+                        </span>
+                        <span className="text-sm font-medium text-blue-600">
+                          {Math.round(progress)}% Complete
+                        </span>
+                      </div>
+
+                      <div className="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
+                        <motion.div
+                          className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full"
+                          initial={{ width: "0%" }}
+                          animate={{ width: `${progress}%` }}
+                          transition={{ duration: 0.6 }}
+                        />
+                      </div>
+
+                      <div className="flex justify-center space-x-2 mt-4">
+                        {questions.map((_, index) => (
+                          <motion.div
+                            key={index}
+                            className={`w-2 h-2 rounded-full ${
+                              index === currentQuestion ? 'bg-blue-600' : 
+                              index < currentQuestion ? 'bg-blue-400' : 'bg-gray-300'
+                            }`}
+                            animate={{
+                              scale: index === currentQuestion ? 1.25 : 1,
+                            }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Question Section */}
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentQuestion}
+                        variants={questionVariants}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        className="mb-8"
+                      >
+                        <div className="flex items-center mb-6">
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                            {getQuestionIcon(questions[currentQuestion]?.category)}
+                          </div>
+                          <h2 className="text-2xl font-bold text-gray-800">
+                            {questions[currentQuestion]?.question}
+                          </h2>
+                        </div>
+
+                        <div className="space-y-4">
+                          {questions[currentQuestion]?.options?.map((option, index) => (
+                            <motion.button
+                              key={index}
+                              onClick={() => handleAnswer(index)}
+                              disabled={isTransitioning}
+                              className={`w-full p-4 text-left bg-white/50 hover:bg-white/80 rounded-2xl transition-all duration-300 border border-gray-200 hover:border-blue-300 hover:shadow-md ${
+                                isTransitioning ? 'cursor-not-allowed opacity-50' : ''
+                              }`}
+                              whileHover={{ y: -2, scale: 1.01 }}
+                              whileTap={{ scale: 0.99 }}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ 
+                                opacity: 1, 
+                                y: 0,
+                                transition: { delay: index * 0.1 }
+                              }}
+                            >
+                              <div className="flex items-center">
+                                <div className="w-6 h-6 border-2 border-gray-300 rounded-full mr-4 flex items-center justify-center">
+                                  <div className="w-2 h-2 bg-blue-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>
+                                <span className="text-gray-700 font-medium">{option}</span>
+                              </div>
+                            </motion.button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    </AnimatePresence>
+                  </>
+                ) : (
+                  <div className="text-center text-gray-600">
+                    No quiz questions available. Please try again later.
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

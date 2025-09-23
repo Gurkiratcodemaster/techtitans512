@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/HeroSection";
 
 interface SkillProgram {
@@ -186,7 +185,6 @@ export default function SkillsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
-      <Navbar />
       
       <HeroSection 
         title="Skill Development"
