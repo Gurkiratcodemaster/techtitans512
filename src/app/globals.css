@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
@@ -36,12 +38,15 @@ body {
   animation: fade-in 0.6s ease-out forwards;
 }
 
-/* Smooth transitions for all elements */
+/* Smooth transitions for all elements.
+  Note: Applying transitions globally with '*' can sometimes affect performance.
+  It's often better to apply them only to specific elements that need them.
+*/
 * {
   transition: all 0.3s ease;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar for WebKit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -59,15 +64,8 @@ body {
   background: #94a3b8;
 }
 
-/* Tailwind scrollbar classes */
+/* Fallback for Firefox scrollbar */
 .scrollbar-thin {
   scrollbar-width: thin;
-}
-
-.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-}
-
-.scrollbar-track-gray-100::-webkit-scrollbar-track {
-  background: #f3f4f6;
+  scrollbar-color: #cbd5e1 #f1f5f9; /* thumb and track color */
 }
