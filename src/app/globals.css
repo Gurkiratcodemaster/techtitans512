@@ -1,4 +1,6 @@
-/* Removed Tailwind directives because build tool does not support them */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
@@ -36,14 +38,6 @@ body {
   animation: fade-in 0.6s ease-out forwards;
 }
 
-/* Smooth transitions for all elements.
-  Note: Applying transitions globally with '*' can sometimes affect performance.
-  It's often better to apply them only to specific elements that need them.
-*/
-* {
-  transition: all 0.3s ease;
-}
-
 /* Custom scrollbar for WebKit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
   width: 8px;
@@ -65,5 +59,8 @@ body {
 /* Fallback for Firefox scrollbar */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9; /* thumb and track color */
+  scrollbar-color: #cbd5e1 #f1f5f9;
 }
+
+/* Remove the global transition as it can cause performance issues */
+/* If you need transitions, apply them specifically to elements that need them */
