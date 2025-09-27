@@ -308,12 +308,15 @@ export class ClientDatabaseService {
   
   // User Profile Operations
   static async createUserProfile(data: UserProfile) {
-    console.log('ClientDatabaseService: Creating user profile with data:', data);
-    
+    // Get Supabase session token
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+
     const response = await fetch('/api/user-profile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
       body: JSON.stringify(data),
     });
@@ -328,10 +331,8 @@ export class ClientDatabaseService {
 
     const result = await response.json();
     console.log('ClientDatabaseService: User profile created successfully');
-    
     // Cache the result
     cacheManager.set(`user_profile_${data.userId}`, result.userProfile);
-    
     return result.userProfile;
   }
 

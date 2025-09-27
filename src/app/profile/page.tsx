@@ -4,10 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 // Supabase auth placeholder; password/profile updates can be implemented via Supabase later
 import { supabase, UserUtils } from "@/lib/database";
-// import D3ProgressChart from "@/components/D3ProgressChart";
-// import D3CareerJourney from "@/components/D3CareerJourney";
-// import D3SkillsWheel from "@/components/D3SkillsWheel";
-// import D3CareerPathway from "@/components/D3CareerPathway";
+
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
@@ -299,44 +296,9 @@ export default function ProfilePage() {
           <div className="mt-8">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Your Journey</h2>
             
-            {/* Progress Chart */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-lg mb-4">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Progress Overview</h3>
-              <D3ProgressChart 
-                completedSteps={userProgress}
-                totalSteps={careerPlan}
-              />
-            </div>
 
-            {/* Career Journey */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-lg mb-4">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Career Journey</h3>
-              <D3CareerJourney 
-                currentPosition={user.classLevel}
-                targetCareers={user.interests}
-                timelineEvents={milestones}
-              />
-            </div>
 
-            {/* Skills Wheel */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-lg mb-4">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Skills Wheel</h3>
-              <D3SkillsWheel 
-                currentSkills={user.skills}
-                targetSkills={careerRequirements}
-                progressPercentage={skillProgress}
-              />
-            </div>
 
-            {/* Career Pathway */}
-            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-lg">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Career Pathway</h3>
-              <D3CareerPathway 
-                currentLevel={user.education}
-                goalCareer={user.targetCareer}
-                milestones={educationMilestones}
-              />
-            </div>
           </div>
         </div>
       </div>
