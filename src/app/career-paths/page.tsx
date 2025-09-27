@@ -1,74 +1,36 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
 import { HeroSection } from "@/components/HeroSection";
 import CornerChatbot from "@/components/CornerChatbot";
-import { CareerService, DegreeOverview } from "@/lib/supabaseClient";
-import { easeOut } from "framer-motion";
-
-// Animation variants
-const pageVariants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 }
-};
-
-const cardVariants = {
-  initial: { opacity: 0, scale: 0.95 },
-  animate: { 
-    opacity: 1, 
-    scale: 1,
-    transition: { duration: 0.4, ease: easeOut }
-  },
-  hover: {
-    scale: 1.02,
-    y: -5,
-    transition: { duration: 0.2 }
-  }
-};
-
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+import { CareerService, DegreeOverview } from "@/lib/database";
+import CareerVisualization from '@/components/CareerVisualization';
+import { Layers, Grid3X3, Network, BarChart3 } from 'lucide-react';
 
 export default function CareerPathsPage() {
   const [loaded, setLoaded] = useState(false);
   const [selectedDegree, setSelectedDegree] = useState<DegreeOverview | null>(null);
   const [showChatbot, setShowChatbot] = useState(false);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [visualizationMode, setVisualizationMode] = useState<'grid' | 'flow' | 'network' | 'enhanced'>('grid');
 
-  // React Query for data fetching (Fixed: Removed deprecated onSuccess)
   const { 
-    data: careerPathsData = [], 
+    data: careerPathsData, 
     isLoading, 
-    error,
-    refetch,
-    isSuccess
+    error, 
+    refetch 
   } = useQuery({
-    queryKey: ['career-paths'],
-    queryFn: CareerService.getDegreeOverviews,
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    retry: 3,
-    refetchOnWindowFocus: false, // Added: Prevent unnecessary refetches
+    queryKey: ['careerPaths'],
+    queryFn: CareerService.getCareerPaths,
   });
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Fixed: Use isSuccess instead of deprecated onSuccess callback
-  useEffect(() => {
-    if (isSuccess && careerPathsData.length > 0 && !selectedDegree) {
-      setSelectedDegree(careerPathsData[0]);
+    if (careerPathsData) {
+      setLoaded(true);
     }
-  }, [isSuccess, careerPathsData, selectedDegree]);
+  }, [careerPathsData]);
 
+  // Handle node click for chatbot
   const handleNodeClick = (nodeTitle: string) => {
     setSelectedNode(nodeTitle);
     setShowChatbot(true);
@@ -77,83 +39,44 @@ export default function CareerPathsPage() {
   // Loading state
   if (isLoading) {
     return (
-      <motion.div 
-        className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
-        
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white">
         <div className="flex items-center justify-center min-h-screen">
-          <motion.div
-            className="text-center"
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.div
-              className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            />
-            <motion.p
-              className="text-gray-600 text-lg"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              Loading career paths...
-            </motion.p>
-          </motion.div>
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4 animate-spin" />
+            <p className="text-gray-600 text-lg">Loading career paths...</p>
+          </div>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   // Error state
   if (error) {
     return (
-      <motion.div 
-        className="min-h-screen bg-gradient-to-br from-gray-50 via-red-50 to-white"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
-        
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-red-50 to-white">
         <div className="flex items-center justify-center min-h-screen">
-          <motion.div
-            className="text-center p-8 bg-white rounded-2xl shadow-lg max-w-md"
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-          >
+          <div className="text-center p-8 bg-white rounded-2xl shadow-lg max-w-md">
             <div className="text-red-600 text-2xl font-bold mb-4">⚠️ Error</div>
             <p className="text-gray-600 mb-4">
               {error instanceof Error ? error.message : 'Failed to load career paths'}
             </p>
-            <motion.button
+            <button
               onClick={() => refetch()}
               className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
               Retry
-            </motion.button>
-          </motion.div>
+            </button>
+          </div>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
-  // Fixed: Add safety checks for undefined data
   const totalCareers = careerPathsData?.reduce((sum, degree) => sum + (degree.jobs?.length || 0), 0) || 0;
   const totalStudies = careerPathsData?.reduce((sum, degree) => sum + (degree.higher_studies?.length || 0), 0) || 0;
 
   return (
-    <motion.div 
-      className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-    >
-      
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-white">
       <HeroSection 
         title="Career Path Explorer"
         subtitle="Discover diverse career opportunities and plan your academic journey"
@@ -169,31 +92,41 @@ export default function CareerPathsPage() {
         <div className="max-w-6xl mx-auto">
           
           {/* Degree Selection */}
-          <motion.div
-            className="mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="mb-8">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 shadow-lg">
-              <motion.h2 
-                className="text-2xl font-bold text-gray-800 mb-6 text-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-              >
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
                 Select a Degree to Explore
-              </motion.h2>
+              </h2>
               
-              <motion.div 
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-                variants={staggerContainer}
-                initial="initial"
-                animate="animate"
-              >
+              {/* Visualization Mode Toggle */}
+              <div className="flex justify-center mb-6">
+                <div className="bg-gray-100 rounded-xl p-1 shadow-inner">
+                  {[
+                    { mode: 'grid', icon: Grid3X3, label: 'Grid View' },
+                    { mode: 'flow', icon: BarChart3, label: 'Flow Chart' },
+                    { mode: 'network', icon: Network, label: 'Network Graph' },
+                    { mode: 'enhanced', icon: Layers, label: 'Interactive' }
+                  ].map(({ mode, icon: Icon, label }) => (
+                    <button
+                      key={mode}
+                      onClick={() => setVisualizationMode(mode as any)}
+                      className={`px-4 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2 ${
+                        visualizationMode === mode
+                          ? 'bg-blue-600 text-white shadow-md' 
+                          : 'text-gray-600 hover:text-blue-600 hover:bg-white/50'
+                      }`}
+                    >
+                      <Icon size={16} />
+                      <span className="text-sm font-medium hidden sm:inline">{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {careerPathsData && careerPathsData.length > 0 ? (
                   careerPathsData.map((degree) => (
-                    <motion.button
+                    <button
                       key={degree.id}
                       onClick={() => setSelectedDegree(degree)}
                       className={`p-6 rounded-xl text-left transition-all duration-300 border-2 ${
@@ -201,9 +134,6 @@ export default function CareerPathsPage() {
                           ? 'bg-blue-600 text-white shadow-lg border-blue-600'
                           : 'bg-white text-gray-800 hover:shadow-lg border-gray-200 hover:border-blue-300'
                       }`}
-                      variants={cardVariants}
-                      whileHover="hover"
-                      whileTap={{ scale: 0.98 }}
                     >
                       <h3 className="font-bold text-lg mb-2">{degree.degree}</h3>
                       <p className={`text-sm mb-2 ${
@@ -221,188 +151,183 @@ export default function CareerPathsPage() {
                       <div className="text-xs opacity-75">
                         {degree.jobs?.length || 0} careers • {degree.higher_studies?.length || 0} study options
                       </div>
-                    </motion.button>
+                    </button>
                   ))
                 ) : (
-                  <motion.div 
-                    className="col-span-full text-center py-8 text-gray-500"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
+                  <div className="col-span-full text-center py-8 text-gray-500">
                     No degree programs available
-                  </motion.div>
+                  </div>
                 )}
-              </motion.div>
+              </div>
             </div>
-          </motion.div>
+          </div>
           
           {/* Selected Degree Details */}
-          <AnimatePresence mode="wait">
-            {selectedDegree && (
-              <motion.div
-                key={selectedDegree.id}
-                className="space-y-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
-              >
-                {/* Career Options */}
-                <motion.div 
-                  className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg"
-                  variants={cardVariants}
-                  initial="initial"
-                  animate="animate"
-                >
-                  <motion.h3 
-                    className="text-xl font-bold text-gray-800 mb-4 flex items-center"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                  >
-                    <motion.div
-                      className="w-6 h-6 bg-blue-600 rounded mr-3"
-                      whileHover={{ rotate: 90 }}
-                      transition={{ duration: 0.2 }}
-                    />
-                    Career Options with {selectedDegree.degree}
-                  </motion.h3>
-                  
-                  <motion.div 
-                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                    variants={staggerContainer}
-                    initial="initial"
-                    animate="animate"
-                  >
-                    {selectedDegree.jobs && selectedDegree.jobs.length > 0 ? (
-                      selectedDegree.jobs.map((job, index) => (
-                        <motion.div
-                          key={job.id}
-                          className="p-4 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer group"
-                          onClick={() => handleNodeClick(job.job_title)}
-                          variants={cardVariants}
-                          whileHover="hover"
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <div className="font-semibold text-gray-800 mb-2 group-hover:text-blue-700 transition-colors">
-                            {job.job_title}
+          {selectedDegree && (
+            <div key={selectedDegree.id} className="space-y-6">
+              {visualizationMode === 'grid' ? (
+                <>
+                  {/* Career Options */}
+                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                      <div className="w-6 h-6 bg-blue-600 rounded mr-3" />
+                      Career Options with {selectedDegree.degree}
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {selectedDegree.jobs && selectedDegree.jobs.length > 0 ? (
+                        selectedDegree.jobs.map((job, index) => (
+                          <div
+                            key={job.id}
+                            className="p-4 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer group"
+                            onClick={() => handleNodeClick(job.job_title)}
+                          >
+                            <div className="font-semibold text-gray-800 mb-2 group-hover:text-blue-700 transition-colors">
+                              {job.job_title}
+                            </div>
+                            {job.salary_range && (
+                              <div className="text-sm text-green-600 font-medium mb-1">
+                                💰 {job.salary_range}
+                              </div>
+                            )}
+                            {job.job_description && (
+                              <div className="text-sm text-gray-600 mb-2">
+                                {job.job_description}
+                              </div>
+                            )}
+                            {job.required_skills && job.required_skills.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {job.required_skills.slice(0, 3).map((skill: string, skillIndex: number) => (
+                                  <span
+                                    key={skillIndex}
+                                    className="px-2 py-1 text-xs bg-blue-200 text-blue-800 rounded-full"
+                                  >
+                                    {skill}
+                                  </span>
+                                ))}
+                                {job.required_skills.length > 3 && (
+                                  <span className="px-2 py-1 text-xs bg-gray-200 text-gray-600 rounded-full">
+                                    +{job.required_skills.length - 3} more
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
-                          {job.salary_range && (
-                            <div className="text-sm text-green-600 font-medium mb-1">
-                              💰 {job.salary_range}
-                            </div>
-                          )}
-                          {job.job_description && (
-                            <div className="text-sm text-gray-600 mb-2">
-                              {job.job_description}
-                            </div>
-                          )}
-                          {job.required_skills && job.required_skills.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {job.required_skills.slice(0, 3).map((skill, skillIndex) => (
-                                <span
-                                  key={skillIndex}
-                                  className="px-2 py-1 text-xs bg-blue-200 text-blue-800 rounded-full"
-                                >
-                                  {skill}
-                                </span>
-                              ))}
-                              {job.required_skills.length > 3 && (
-                                <span className="px-2 py-1 text-xs bg-gray-200 text-gray-600 rounded-full">
-                                  +{job.required_skills.length - 3} more
-                                </span>
-                              )}
-                            </div>
-                          )}
-                        </motion.div>
-                      ))
-                    ) : (
-                      <div className="col-span-full text-center py-8 text-gray-500">
-                        No career options available for this degree
-                      </div>
-                    )}
-                  </motion.div>
-                </motion.div>
-                
-                {/* Higher Studies Options */}
-                <motion.div 
-                  className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg"
-                  variants={cardVariants}
-                  initial="initial"
-                  animate="animate"
-                >
-                  <motion.h3 
-                    className="text-xl font-bold text-gray-800 mb-4 flex items-center"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <motion.div
-                      className="w-6 h-6 bg-purple-600 rounded mr-3"
-                      whileHover={{ rotate: 90 }}
-                      transition={{ duration: 0.2 }}
-                    />
-                    Higher Studies Options
-                  </motion.h3>
+                        ))
+                      ) : (
+                        <div className="col-span-full text-center py-8 text-gray-500">
+                          No career options available for this degree
+                        </div>
+                      )}
+                    </div>
+                  </div>
                   
-                  <motion.div 
-                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                    variants={staggerContainer}
-                    initial="initial"
-                    animate="animate"
-                  >
-                    {selectedDegree.higher_studies && selectedDegree.higher_studies.length > 0 ? (
-                      selectedDegree.higher_studies.map((study, index) => (
-                        <motion.div
-                          key={study.id}
-                          className="p-4 bg-purple-50 rounded-lg border border-purple-200 hover:bg-purple-100 transition-colors cursor-pointer group"
-                          onClick={() => handleNodeClick(study.study_title)}
-                          variants={cardVariants}
-                          whileHover="hover"
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <div className="font-semibold text-gray-800 mb-2 group-hover:text-purple-700 transition-colors">
-                            {study.study_title}
+                  {/* Higher Studies Options */}
+                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                      <div className="w-6 h-6 bg-purple-600 rounded mr-3" />
+                      Higher Studies Options
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {selectedDegree.higher_studies && selectedDegree.higher_studies.length > 0 ? (
+                        selectedDegree.higher_studies.map((study, index) => (
+                          <div
+                            key={study.id}
+                            className="p-4 bg-purple-50 rounded-lg border border-purple-200 hover:bg-purple-100 transition-colors cursor-pointer group"
+                            onClick={() => handleNodeClick(study.study_title)}
+                          >
+                            <div className="font-semibold text-gray-800 mb-2 group-hover:text-purple-700 transition-colors">
+                              {study.study_title}
+                            </div>
+                            {study.duration && (
+                              <div className="text-sm text-blue-600 font-medium mb-1">
+                                ⏱️ {study.duration}
+                              </div>
+                            )}
+                            {study.study_description && (
+                              <div className="text-sm text-gray-600 mb-2">
+                                {study.study_description}
+                              </div>
+                            )}
+                            {study.specializations && study.specializations.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {study.specializations.slice(0, 3).map((spec: string, specIndex: number) => (
+                                  <span
+                                    key={specIndex}
+                                    className="px-2 py-1 text-xs bg-purple-200 text-purple-800 rounded-full"
+                                  >
+                                    {spec}
+                                  </span>
+                                ))}
+                                {study.specializations.length > 3 && (
+                                  <span className="px-2 py-1 text-xs bg-gray-200 text-gray-600 rounded-full">
+                                    +{study.specializations.length - 3} more
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
-                          {study.duration && (
-                            <div className="text-sm text-blue-600 font-medium mb-1">
-                              ⏱️ {study.duration}
-                            </div>
-                          )}
-                          {study.study_description && (
-                            <div className="text-sm text-gray-600 mb-2">
-                              {study.study_description}
-                            </div>
-                          )}
-                          {study.specializations && study.specializations.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {study.specializations.slice(0, 3).map((spec, specIndex) => (
-                                <span
-                                  key={specIndex}
-                                  className="px-2 py-1 text-xs bg-purple-200 text-purple-800 rounded-full"
-                                >
-                                  {spec}
-                                </span>
-                              ))}
-                              {study.specializations.length > 3 && (
-                                <span className="px-2 py-1 text-xs bg-gray-200 text-gray-600 rounded-full">
-                                  +{study.specializations.length - 3} more
-                                </span>
-                              )}
-                            </div>
-                          )}
-                        </motion.div>
-                      ))
-                    ) : (
-                      <div className="col-span-full text-center py-8 text-gray-500">
-                        No higher studies options available for this degree
+                        ))
+                      ) : (
+                        <div className="col-span-full text-center py-8 text-gray-500">
+                          No higher studies options available for this degree
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                // D3 Visualization
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg min-h-[600px]">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xl font-bold text-gray-800 flex items-center">
+                      <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded mr-3" />
+                      Career Path Visualization: {selectedDegree.degree}
+                    </h3>
+                    <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                      {visualizationMode.charAt(0).toUpperCase() + visualizationMode.slice(1)} View
+                    </div>
+                  </div>
+                  
+                  <CareerVisualization 
+                    mode={visualizationMode}
+                    selectedDegree={selectedDegree.degree}
+                    careerData={{
+                      degree: selectedDegree,
+                      jobs: selectedDegree.jobs || [],
+                      studies: selectedDegree.higher_studies || [],
+                      skills: selectedDegree.jobs?.flatMap(job => job.required_skills || []) || []
+                    }}
+                    onNodeClick={handleNodeClick}
+                    width={800}
+                    height={500}
+                  />
+                  
+                  {/* Visualization Info Panel */}
+                  <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+                    <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
+                      💡 Visualization Guide
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                        <span>Career Opportunities</span>
                       </div>
-                    )}
-                  </motion.div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                        <span>Higher Studies</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <span>Skills & Requirements</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -412,6 +337,6 @@ export default function CareerPathsPage() {
         initialMessage={selectedNode ? `Tell me more about ${selectedNode}` : "Hi!"}
         context={selectedNode || "Career path mapping"}
       />
-    </motion.div>
+    </div>
   );
 }

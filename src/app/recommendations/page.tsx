@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ClientDatabaseService as DatabaseService } from "@/lib/client-database";
+import { ClientDatabaseService as DatabaseService, UserUtils } from "@/lib/database";
 
 interface UserProfileData {
   fullName: string;
@@ -59,7 +59,7 @@ export default function RecommendationsPage() {
     if (!user) return;
 
     try {
-      const profile = await DatabaseService.getUserProfile(user.uid);
+      const profile = await DatabaseService.getUserProfile(UserUtils.getId(user));
       
       if (profile && profile.onboardingCompleted) {
         setUserProfile({

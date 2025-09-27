@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient"; // Adjust this path if necessary
+import { supabase } from "@/lib/database"; // Adjust this path if necessary
 
 interface Scholarship {
   id: string;

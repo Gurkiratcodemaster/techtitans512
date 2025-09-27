@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/database";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/navbar";
 import HeroSection from "@/components/HeroSection";
 import { BACKGROUNDS, COLORS, RESPONSIVE } from "@/lib/theme";
@@ -130,11 +129,7 @@ export default function LoginPage() {
   };
 
   return (
-    <motion.div 
-      className={BACKGROUNDS.page + " min-h-screen"}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
+    <div className={BACKGROUNDS.PAGE_PRIMARY + " min-h-screen"}>
       <Navbar />
       <HeroSection 
         title={isSignup ? "Join Career Choice" : "Welcome Back"}
@@ -144,45 +139,23 @@ export default function LoginPage() {
       
       <div className={RESPONSIVE.container + " " + RESPONSIVE.section}>
         <div className="max-w-md mx-auto">
-          <motion.div 
-            className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8"}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <motion.h2 
-              className="text-2xl font-bold text-gray-800 text-center mb-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
+          <div className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8"}>
+            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
               {isSignup ? "Create Account" : "Sign In"}
-            </motion.h2>
+            </h2>
 
-            <AnimatePresence>
-              {error && (
-                <motion.div 
-                  className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                >
-                  {error}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">
+                {error}
+              </div>
+            )}
 
             {/* Google Auth Button */}
-            <motion.button
+            <button
               type="button"
               onClick={handleGoogleAuth}
               disabled={loading}
               className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 hover:shadow-md disabled:opacity-50 mb-4"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
             >
               <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -191,7 +164,7 @@ export default function LoginPage() {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
               Continue with Google
-            </motion.button>
+            </button>
 
             {/* Divider */}
             <div className="relative my-6">
@@ -204,11 +177,7 @@ export default function LoginPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
+              <div>
                 <input
                   type="email"
                   placeholder="Email"
@@ -217,13 +186,9 @@ export default function LoginPage() {
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300 placeholder-gray-400 bg-white/80"
                 />
-              </motion.div>
+              </div>
               
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-              >
+              <div>
                 <input
                   type="password"
                   placeholder="Password"
@@ -233,17 +198,11 @@ export default function LoginPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300 placeholder-gray-400 bg-white/80"
                 />
                 {isSignup && password && (
-                  <motion.div 
-                    className="mt-2 text-xs space-y-1"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                  >
+                  <div className="mt-2 text-xs space-y-1">
                     {Object.entries(validatePassword(password).rules).map(([rule, valid]) => (
-                      <motion.div 
+                      <div 
                         key={rule} 
                         className={`flex items-center ${valid ? 'text-green-600' : 'text-red-600'}`}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
                       >
                         <span className="mr-1">{valid ? '✓' : '✗'}</span>
                         <span>
@@ -253,19 +212,15 @@ export default function LoginPage() {
                           {rule === 'hasNumber' && 'Number'}
                           {rule === 'hasSpecial' && 'Special character'}
                         </span>
-                      </motion.div>
+                      </div>
                     ))}
-                  </motion.div>
+                  </div>
                 )}
-              </motion.div>
+              </div>
 
               {isSignup && (
                 <>
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 }}
-                  >
+                  <div>
                     <input
                       type="text"
                       placeholder="Full Name"
@@ -274,14 +229,9 @@ export default function LoginPage() {
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300 placeholder-gray-400 bg-white/80"
                     />
-                  </motion.div>
+                  </div>
 
-                  <motion.div 
-                    className="grid grid-cols-2 gap-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
-                  >
+                  <div className="grid grid-cols-2 gap-4">
                     <select
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
@@ -307,41 +257,27 @@ export default function LoginPage() {
                         <option value="graduate">Graduate</option>
                       </select>
                     )}
-                  </motion.div>
+                  </div>
                 </>
               )}
 
-              <motion.button
+              <button
                 type="submit"
                 disabled={loading}
-                className={`w-full ${COLORS.primary.gradient} ${COLORS.primary.gradientHover} ${RESPONSIVE.button} disabled:opacity-50`}
-                whileHover={{ scale: loading ? 1 : 1.02 }}
-                whileTap={{ scale: loading ? 1 : 0.98 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9 }}
+                className={`w-full ${COLORS.primary.gradient} ${COLORS.primary.gradientHover} ${RESPONSIVE.button} disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200`}
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
-                    <motion.div
-                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    />
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2 animate-spin" />
                     {isSignup ? "Creating Account..." : "Signing In..."}
                   </div>
                 ) : (
                   isSignup ? "Create Account" : "Sign In"
                 )}
-              </motion.button>
+              </button>
             </form>
 
-            <motion.div 
-              className="mt-6 text-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.0 }}
-            >
+            <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
                 <button
@@ -352,16 +288,11 @@ export default function LoginPage() {
                   {isSignup ? "Sign In" : "Sign Up"}
                 </button>
               </p>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Additional Info */}
-          <motion.div 
-            className={BACKGROUNDS.card + " p-6 text-center mt-6"}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1 }}
-          >
+          <div className={BACKGROUNDS.card + " p-6 text-center mt-6"}>
             <p className="text-sm text-gray-600">
               By signing in, you agree to our{" "}
               <a href="#" className="text-blue-600 hover:text-blue-700 hover:underline">
@@ -372,9 +303,9 @@ export default function LoginPage() {
                 Privacy Policy
               </a>
             </p>
-          </motion.div>
+          </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

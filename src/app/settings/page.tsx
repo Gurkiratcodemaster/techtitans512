@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { UserUtils } from "@/lib/database";
 
 export default function SettingsPage() {
   const { user, loading } = useAuth();
@@ -47,7 +48,7 @@ export default function SettingsPage() {
         notifications,
         privacy,
         preferences,
-        userId: user?.uid,
+        userId: UserUtils.getId(user),
         lastUpdated: new Date().toISOString()
       };
       
@@ -91,7 +92,7 @@ export default function SettingsPage() {
       const savedSettings = localStorage.getItem('userSettings');
       if (savedSettings) {
         const settings = JSON.parse(savedSettings);
-        if (settings.userId === user?.uid) {
+        if (settings.userId === UserUtils.getId(user)) {
           setNotifications(settings.notifications || notifications);
           setPrivacy(settings.privacy || privacy);
           setPreferences(settings.preferences || preferences);
@@ -100,7 +101,7 @@ export default function SettingsPage() {
     } catch (error) {
       console.log("No saved settings found");
     }
-  }, [user?.uid]);
+  }, [UserUtils.getId(user)]);
 
   if (loading) {
     return (
@@ -384,6 +385,25 @@ export default function SettingsPage() {
                     <option value="professional">Professional Course</option>
                   </select>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* User preferences display */}
+          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Preferences Overview</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+              <div>
+                <span className="font-medium">Theme:</span> {preferences.theme || 'Not set'}
+              </div>
+              <div>
+                <span className="font-medium">Language:</span> {preferences.language || 'Not set'}
+              </div>
+              <div>
+                <span className="font-medium">Career Field:</span> {preferences.careerField || 'Not set'}
+              </div>
+              <div>
+                <span className="font-medium">Education Level:</span> {preferences.educationLevel || 'Not set'}
               </div>
             </div>
           </div>

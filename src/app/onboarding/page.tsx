@@ -2,10 +2,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-// Supabase auth; placeholder for updating user metadata if needed later
-import { supabase } from "@/lib/supabaseClient";
-import { ClientDatabaseService } from "@/lib/client-database";
-import { validateAndConvertFormData } from "@/lib/enum-converters";
+import { supabase } from "@/lib/database";
+import { ClientDatabaseService, UserUtils } from "@/lib/database";
+import { EnumConverters, validateAndConvertFormData } from "@/lib/theme";
 
 interface UserProfileData {
   // Personal Information
@@ -65,7 +64,7 @@ export default function OnboardingPage() {
     if (user) {
       setFormData(prev => ({
         ...prev,
-        fullName: user.displayName || ""
+        fullName: UserUtils.getDisplayName(user)
       }));
     }
   }, [user, loading, router]);
@@ -116,7 +115,7 @@ export default function OnboardingPage() {
 
       // Save user profile data to database
       const convertedData = validateAndConvertFormData({
-        userId: user.uid,
+        userId: UserUtils.getId(user),
         fullName: formData.fullName,
         age: formData.age,
         gender: formData.gender,

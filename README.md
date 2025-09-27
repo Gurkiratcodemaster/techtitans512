@@ -1,4 +1,21 @@
-# Career Choice App - TechTitans512 🚀
+import { useRouter } from 'next/navigation';
+// ... existing code
+import { useAuth } from '@/contexts/AuthContext';
+
+const INTERESTS = [
+  'Technology', 'Healthcare', 'Arts & Design', 'Finance', 'Engineering', 
+  'Education', 'Science', 'Business', 'Law', 'Media', 'Sports', 'Environment'
+];
+
+const STREAMS = ['Science', 'Commerce', 'Arts/Humanities'];
+
+const SUBJECTS = [
+  'Physics', 'Chemistry', 'Biology', 'Mathematics', 'Computer Science', 'History',
+  'Geography', 'Economics', 'Political Science', 'Accountancy', 'Business Studies'
+];
+
+export default function ProfileSetup() {
+// ... existing code# Career Choice App - TechTitans512 🚀
 
 A modern, full-stack career guidance platform built with Next.js, TypeScript, Tailwind CSS, and Supabase. This app helps students make informed decisions about their career paths through AI-powered recommendations and interactive visualizations.
 

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { ClientDatabaseService } from "@/lib/client-database";
+import { ClientDatabaseService, UserUtils } from "@/lib/database";
 
 export default function DataMigrationPage() {
   const { user } = useAuth();
@@ -53,9 +53,9 @@ export default function DataMigrationPage() {
     setMigrationStatus(null);
 
     try {
-      const result = await ClientDatabaseService.migrateLocalStorageToDatabase(user.uid);
+      const result = await ClientDatabaseService.migrateLocalStorageToDatabase(UserUtils.getId(user));
       
-      if (result.success) {
+      if (result.migrated > 0) {
         setMigrationStatus({
           success: true,
           message: "Data migration completed successfully! Your data has been moved to the cloud database."
@@ -73,7 +73,7 @@ export default function DataMigrationPage() {
         setMigrationStatus({
           success: false,
           message: "Migration failed",
-          error: result.error
+          error: result.details.join(', ') || "Unknown error occurred"
         });
       }
     } catch (error) {

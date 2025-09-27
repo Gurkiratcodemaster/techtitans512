@@ -1,9 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import { CareerPathService, CareerNode, CareerLink, CareerPathData } from "@/lib/supabaseClient";
+import { CareerPathService, CareerNode, CareerLink, CareerPathData } from "@/lib/database";
 
-const EnhancedCareerVisualization: React.FC = () => {
+interface EnhancedCareerVisualizationProps {
+  recommendedDegrees?: string[];
+}
+
+const EnhancedCareerVisualization: React.FC<EnhancedCareerVisualizationProps> = ({ 
+  recommendedDegrees 
+}) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [selectedNode, setSelectedNode] = useState<CareerNode | null>(null);
   const [hoveredNode, setHoveredNode] = useState<CareerNode | null>(null);
@@ -35,7 +41,7 @@ const EnhancedCareerVisualization: React.FC = () => {
         setLoading(true);
         setError(null);
         setSelectedNode(null);
-        const data = await CareerPathService.getCareerPathForDegree(selectedDegree);
+        const data = await CareerPathService.getCareerPathForDegree(selectedDegree!);
         setCareerData(data);
       } catch (err) {
         setError('Failed to load career path data.');
@@ -112,7 +118,7 @@ const EnhancedCareerVisualization: React.FC = () => {
       .style("pointer-events", "none");
 
     groups.append("text")
-      .text(d => d.name)
+      .text(d => d.name || d.title || 'Unknown')
       .attr("text-anchor", "middle")
       .attr("dy", 42)
       .attr("font-size", 12)

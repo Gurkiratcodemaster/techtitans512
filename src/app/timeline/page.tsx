@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar } from '@/components/navbar';
 import { HeroSection } from '@/components/HeroSection';
 import Footer from '@/components/footer';
-import { TimelineService, TimelineEvent } from '@/lib/supabaseClient';
+import { TimelineService, TimelineEvent } from '@/lib/database';
 
 
 export default function TimelinePage() {
@@ -112,8 +112,8 @@ export default function TimelinePage() {
         subtitle="Never miss important deadlines! Track admission dates, scholarship applications, entrance exams, and career opportunities all in one place"
         loaded={loaded}
         stats={[
-          { value: timelineEvents.filter(e => e.days_left <= 7).length, label: 'This Week' },
-          { value: timelineEvents.filter(e => e.days_left <= 30).length, label: 'This Month' },
+          { value: timelineEvents.filter(e => e.days_left !== undefined && e.days_left <= 7).length, label: 'This Week' },
+          { value: timelineEvents.filter(e => e.days_left !== undefined && e.days_left <= 30).length, label: 'This Month' },
           { value: timelineEvents.filter(e => e.category === 'scholarship').length, label: 'Scholarships' }
         ]}
       />
@@ -166,9 +166,11 @@ export default function TimelinePage() {
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="text-xl font-bold text-gray-800">{event.title}</h3>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(event.priority)}`}>
-                            {event.priority.charAt(0).toUpperCase() + event.priority.slice(1)} Priority
-                          </span>
+                          {event.priority && (
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(event.priority)}`}>
+                              {event.priority.charAt(0).toUpperCase() + event.priority.slice(1)} Priority
+                            </span>
+                          )}
                         </div>
                         <p className="text-gray-600 mb-2">{event.description}</p>
                         <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -191,13 +193,13 @@ export default function TimelinePage() {
                   
                   <div className="flex flex-col items-end gap-3 min-w-[120px]">
                     <div className={`px-3 py-2 rounded-full text-sm font-medium ${
-                      event.days_left <= 7 
+                      event.days_left !== undefined && event.days_left <= 7 
                         ? 'bg-blue-100 text-blue-800 border-2 border-blue-200' 
-                        : event.days_left <= 30 
+                        : event.days_left !== undefined && event.days_left <= 30 
                         ? 'bg-blue-50 text-blue-700 border-2 border-blue-150'
                         : 'bg-gray-100 text-gray-700 border-2 border-gray-200'
                     }`}>
-                      {formatDaysLeft(event.days_left)}
+                      {event.days_left !== undefined ? formatDaysLeft(event.days_left) : 'N/A'}
                     </div>
                     
                     <div className="flex gap-2">
@@ -219,6 +221,26 @@ export default function TimelinePage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Timeline placeholder */}
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Interactive Timeline</h3>
+            <div className="text-gray-600 text-center py-12">
+              <div className="text-4xl mb-4">📅</div>
+              <p>Interactive timeline features are being updated.</p>
+              <p className="text-sm mt-2">Enhanced timeline visualization will be available soon.</p>
+            </div>
+          </div>
+
+          {/* Education timeline placeholder */}
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Education Timeline</h3>
+            <div className="text-gray-600 text-center py-12">
+              <div className="text-4xl mb-4">🎓</div>
+              <p>Educational timeline features are being updated.</p>
+              <p className="text-sm mt-2">Progress tracking and milestone visualization will be available soon.</p>
+            </div>
           </div>
 
           {/* Notification Setup */}

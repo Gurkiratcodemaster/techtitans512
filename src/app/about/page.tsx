@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient"; // adjust path if needed
+import { supabase } from "@/lib/database"; // adjust path if needed
 import { HeroSection } from "@/components/HeroSection";
 import { FeatureCard } from "@/app/about/FeatureCard";
 

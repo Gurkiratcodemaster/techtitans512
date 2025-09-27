@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import { CareerPathService, CareerNode, CareerLink, CareerPathData } from "@/lib/supabaseClient"; // Adjust path if needed
+import { CareerPathService, CareerNode, CareerLink, CareerPathData } from "@/lib/database"; // Adjust path if needed
 
 const CareerPathVisualizationPage = () => {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -131,7 +131,7 @@ const CareerPathVisualizationPage = () => {
       .attr("text-anchor", "middle").attr("dy", "0.35em")
       .attr("font-size", "20px").style("pointer-events", "none").attr("fill", "white");
 
-    node.append("text").text(d => d.name)
+    node.append("text").text(d => d.name || d.title || 'Unknown')
       .attr("text-anchor", "middle").attr("dy", "3.2em")
       .attr("font-size", "12px").attr("font-weight", "600").attr("fill", "#1F2937");
 

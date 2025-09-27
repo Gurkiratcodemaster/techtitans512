@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useOnlineStatus } from './OfflineSupport';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserUtils } from '@/lib/database';
 
 interface Message {
   id: string;
@@ -44,7 +45,7 @@ const UnifiedChatbot: React.FC<UnifiedChatbotProps> = ({
   useEffect(() => {
     // Initialize messages based on context and user profile
     const initMessage = initialMessage || (user ? 
-      `Hi ${user.displayName || 'there'}! I'm your AI career assistant. I can help with career guidance, entrance exams, and educational paths.` :
+      `Hi ${UserUtils.getDisplayName(user)}! I'm your AI career assistant. I can help with career guidance, entrance exams, and educational paths.` :
       `Hi! I'm your AI career assistant. Ask me about courses, colleges, entrance exams, or career paths!`
     );
 
@@ -61,7 +62,7 @@ const UnifiedChatbot: React.FC<UnifiedChatbotProps> = ({
         const profileData = localStorage.getItem('userProfile');
         if (profileData) {
           const profile = JSON.parse(profileData);
-          if (profile.userId === user.uid) {
+          if (profile.userId === UserUtils.getId(user)) {
             setUserProfile(profile);
           }
         }

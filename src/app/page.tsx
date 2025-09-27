@@ -2,10 +2,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { openChatbot } from "@/components/chatbot";
 import CornerChatbot from "@/components/CornerChatbot";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/database";
 import HeroSection from "@/components/HeroSection";
 import { Navbar } from "@/components/navbar";
 import { BACKGROUNDS, COLORS, RESPONSIVE } from "@/lib/theme";
@@ -52,11 +50,7 @@ export default function Home() {
   }, [motivationalQuotes]);
   
   return (
-    <motion.div 
-      className={BACKGROUNDS.page + " min-h-screen"}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
+    <div className={BACKGROUNDS.PAGE_PRIMARY + " min-h-screen"}>
       <Navbar />
       <HeroSection
         title="Welcome to Career Choice"
@@ -74,23 +68,12 @@ export default function Home() {
           {/* Feature Cards */}
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             {/* Career Quiz Card */}
-            <motion.div 
-              className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 text-center"}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
-              transition={{ delay: 0.1 }}
-            >
-              <motion.div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 ${
-                loaded ? 'rotate-0 scale-100' : 'rotate-180 scale-0'
-              }`}
-              initial={{ rotate: 180, scale: 0 }}
-              animate={{ rotate: 0, scale: 1 }}
-              transition={{ delay: 0.15 }}
-              >
+            <div className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 text-center"}>
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 hover:scale-110 hover:rotate-12 transition-transform duration-300">
                 <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-              </motion.div>
+              </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Career Assessment</h2>
               <p className="text-gray-600 mb-6 font-medium">Take our comprehensive quiz to discover which career paths align with your skills and interests.</p>
               <div className="space-y-3">
@@ -101,26 +84,18 @@ export default function Home() {
                   Class 12 Assessment
                 </Link>
               </div>
-            </motion.div>
+            </div>
 
             {/* AI Chatbot Card */}
-            <motion.div 
-              className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 text-center cursor-pointer"}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
-              transition={{ delay: 0.2 }}
+            <div 
+              className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 text-center cursor-pointer hover:scale-[1.02] transition-transform duration-300"}
               onClick={() => setShowCornerChatbot(true)}
             >
-              <motion.div 
-                className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6"
-                initial={{ rotate: -180, scale: 0 }}
-                animate={{ rotate: 0, scale: 1 }}
-                transition={{ delay: 0.25 }}
-              >
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 hover:scale-110 hover:-rotate-12 transition-transform duration-300">
                 <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
-              </motion.div>
+              </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-4">AI Career Guidance</h2>
               <p className="text-gray-600 mb-6 font-medium">Chat with our intelligent assistant for personalized career advice and guidance tailored to your goals.</p>
 
@@ -130,25 +105,15 @@ export default function Home() {
               >
                 Start Conversation
               </button>
-            </motion.div>
+            </div>
 
             {/* Resources Card */}
-            <motion.div 
-              className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 text-center"}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
-              transition={{ delay: 0.3 }}
-            >
-              <motion.div 
-                className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6"
-                initial={{ rotate: 180, scale: 0 }}
-                animate={{ rotate: 0, scale: 1 }}
-                transition={{ delay: 0.35 }}
-              >
+            <div className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 text-center"}>
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 hover:scale-110 hover:rotate-12 transition-transform duration-300">
                 <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
-              </motion.div>
+              </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Learning Resources</h2>
               <p className="text-gray-600 mb-6 font-medium">Access curated educational content, courses, and materials to develop skills for your chosen career path.</p>
               <Link 
@@ -157,16 +122,11 @@ export default function Home() {
               >
                 Explore Resources
               </Link>
-            </motion.div>
+            </div>
           </div>
 
           {/* Skills Programs Section */}
-          <motion.div 
-            className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 mb-12"}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
-            transition={{ delay: 0.4 }}
-          >
+          <div className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 mb-12"}>
             <div className="flex flex-col lg:flex-row items-center gap-8">
               {/* Left side - Text Content */}
               <div className="flex-1 text-center lg:text-left">
@@ -264,15 +224,10 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* How We Help Students Section */}
-          <motion.div 
-            className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 mb-12"}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
-            transition={{ delay: 0.5 }}
-          >
+          <div className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 mb-12"}>
             <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8 transform transition-all duration-400 delay-350 ${
               loaded ? 'rotate-0 scale-100' : 'rotate-180 scale-0'
             }`}>
@@ -364,15 +319,10 @@ export default function Home() {
                 <p className="text-gray-600 text-sm font-medium">24/7 AI assistant and expert mentorship to guide you through every step of your career journey.</p>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Timeline Tracker Section */}
-          <motion.div 
-            className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-6 mb-8"}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
-            transition={{ delay: 0.6 }}
-          >
+          <div className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-6 mb-8"}>
             <div className={`w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 transform transition-all duration-400 delay-400 ${
               loaded ? 'rotate-0 scale-100' : 'rotate-180 scale-0'
             }`}>
@@ -489,15 +439,10 @@ export default function Home() {
                 <div className="text-gray-600 text-xs">Application guidance</div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Motivational Quotes Section */}
-          <motion.div 
-            className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 mb-12 text-center"}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
-            transition={{ delay: 0.7 }}
-          >
+          <div className={BACKGROUNDS.card + " " + RESPONSIVE.cardLarge + " p-8 mb-12 text-center"}>
             <div className="relative h-24 flex items-center justify-center">
               {/* This conditional check prevents the error */}
               {motivationalQuotes[currentQuote] && (
@@ -525,7 +470,7 @@ export default function Home() {
                 />
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
@@ -551,6 +496,6 @@ export default function Home() {
         initialMessage="Hi! I'm your career guidance assistant. I can help you with course selection, career advice, and entrance exam information. What would you like to know?"
         context="Homepage career guidance"
       />
-    </motion.div>
+    </div>
   );
 }

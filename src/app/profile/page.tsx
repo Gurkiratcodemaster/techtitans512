@@ -3,7 +3,11 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 // Supabase auth placeholder; password/profile updates can be implemented via Supabase later
-import { supabase } from "@/lib/supabaseClient";
+import { supabase, UserUtils } from "@/lib/database";
+// import D3ProgressChart from "@/components/D3ProgressChart";
+// import D3CareerJourney from "@/components/D3CareerJourney";
+// import D3SkillsWheel from "@/components/D3SkillsWheel";
+// import D3CareerPathway from "@/components/D3CareerPathway";
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
@@ -23,7 +27,7 @@ export default function ProfilePage() {
       router.push("/login");
     }
     if (user) {
-      setDisplayName(user.displayName || "");
+      setDisplayName(UserUtils.getDisplayName(user));
     }
   }, [user, loading, router]);
 
@@ -104,9 +108,9 @@ export default function ProfilePage() {
           <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg mb-6">
             {/* Profile Header */}
             <div className="flex items-center space-x-4 mb-6 pb-6 border-b border-gray-200">
-              {user.photoURL ? (
+              {UserUtils.getPhotoURL(user) ? (
                 <img 
-                  src={user.photoURL} 
+                  src={UserUtils.getPhotoURL(user)!} 
                   alt="Profile" 
                   className="w-20 h-20 rounded-full border-4 border-blue-200"
                 />
@@ -119,7 +123,7 @@ export default function ProfilePage() {
               )}
               <div>
                 <h2 className="text-2xl font-bold text-gray-800">
-                  {user.displayName || "User"}
+                  {UserUtils.getDisplayName(user)}
                 </h2>
                 <p className="text-gray-600">{user.email}</p>
                 <span className="inline-block mt-2 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
@@ -196,7 +200,7 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => {
                         setIsEditing(false);
-                        setDisplayName(user.displayName || "");
+                        setDisplayName(UserUtils.getDisplayName(user));
                         setError("");
                         setSuccess("");
                       }}
@@ -207,7 +211,7 @@ export default function ProfilePage() {
                   </>
                 )}
                 
-                {user.providerData[0]?.providerId === 'password' && (
+                {UserUtils.isEmailAuth(user) && (
                   <button
                     type="button"
                     onClick={() => setShowPasswordForm(!showPasswordForm)}
@@ -221,7 +225,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Password Change Form */}
-          {showPasswordForm && user.providerData[0]?.providerId === 'password' && (
+          {showPasswordForm && UserUtils.isEmailAuth(user) && (
             <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
               <h3 className="text-xl font-bold text-gray-800 mb-4">Change Password</h3>
               <form onSubmit={handleUpdatePassword} className="space-y-4">
@@ -290,6 +294,50 @@ export default function ProfilePage() {
               </form>
             </div>
           )}
+
+          {/* Progress Tracking and Career Journey */}
+          <div className="mt-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Your Journey</h2>
+            
+            {/* Progress Chart */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-lg mb-4">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Progress Overview</h3>
+              <D3ProgressChart 
+                completedSteps={userProgress}
+                totalSteps={careerPlan}
+              />
+            </div>
+
+            {/* Career Journey */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-lg mb-4">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Career Journey</h3>
+              <D3CareerJourney 
+                currentPosition={user.classLevel}
+                targetCareers={user.interests}
+                timelineEvents={milestones}
+              />
+            </div>
+
+            {/* Skills Wheel */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-lg mb-4">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Skills Wheel</h3>
+              <D3SkillsWheel 
+                currentSkills={user.skills}
+                targetSkills={careerRequirements}
+                progressPercentage={skillProgress}
+              />
+            </div>
+
+            {/* Career Pathway */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 shadow-lg">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Career Pathway</h3>
+              <D3CareerPathway 
+                currentLevel={user.education}
+                goalCareer={user.targetCareer}
+                milestones={educationMilestones}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

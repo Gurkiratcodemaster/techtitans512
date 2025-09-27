@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/lib/database";
 
 interface College {
   id: string;

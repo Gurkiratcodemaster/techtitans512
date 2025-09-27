@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/database';
 import { useAuth } from '@/contexts/AuthContext';
 
 const INTERESTS = [
@@ -44,30 +43,55 @@ export default function ProfileSetup() {
   };
 
   const handleSubmit = async () => {
-    if (!user) return;
+    if (!user) {
+      alert('User not authenticated');
+      return;
+    }
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('user_profiles')
-        .upsert({
-          id: user.id,
+      console.log('Saving profile for user:', user.id);
+      console.log('Profile data:', formData);
+
+      const response = await fetch('/api/user-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
           email: user.email,
           ...formData
-        });
+        }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+      console.log('API Response:', result);
 
-      // Redirect to quiz based on class level
-      if (formData.class_level === '10th') {
-        router.push('/quiz/class10');
-      } else if (formData.class_level === '12th') {
-        router.push('/quiz/class12');
-      } else {
-        router.push('/dashboard');
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to save profile');
       }
+
+      if (result.success) {
+        alert('Profile saved successfully!');
+        
+        // Redirect based on class level
+        if (formData.class_level === '10th') {
+          router.push('/quiz/class10');
+        } else if (formData.class_level === '12th') {
+          router.push('/quiz/class12');
+        } else {
+          router.push('/dashboard');
+        }
+      }
+
     } catch (error) {
-      console.error('Profile creation error:', error);
+      console.error('Profile save error:', error);
+      if (error instanceof Error) {
+        alert(`Error saving profile: ${error.message}`);
+      } else {
+        alert('Error saving profile');
+      }
     } finally {
       setLoading(false);
     }
@@ -79,11 +103,7 @@ export default function ProfileSetup() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white pt-20">
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl p-8"
-        >
+        <div className="bg-white rounded-2xl shadow-xl p-8">
           <h1 className="text-3xl font-bold text-center mb-8">
             Complete Your Profile
           </h1>
@@ -214,7 +234,7 @@ export default function ProfileSetup() {
               </button>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

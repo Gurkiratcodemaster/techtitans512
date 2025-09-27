@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { CareerService, CareerPath } from "@/lib/supabaseClient";
+import { CareerService, CareerPath } from "@/lib/database";
 
 interface SimpleCareerPathProps {
   pathType: "engineering" | "medical" | "business";
@@ -54,18 +54,18 @@ const SimpleCareerPath: React.FC<SimpleCareerPathProps> = ({ pathType, className
         <div className="relative">
           <div className="absolute left-8 top-16 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 rounded-full hidden md:block"></div>
           <div className="space-y-6">
-            {pathData.steps.map((step, index) => (
+            {pathData.steps.filter(step => step.node).map((step, index) => (
               <div 
-                key={step.node.id}
+                key={step.node!.id}
                 className={`relative flex items-start space-x-6 p-6 rounded-2xl transition-all cursor-pointer group ${
-                  activeStepId === step.node.id ? 'bg-blue-50 border-2 border-blue-200 shadow-lg' : 'bg-white/50 hover:bg-white/80 border'
+                  activeStepId === step.node!.id ? 'bg-blue-50 border-2 border-blue-200 shadow-lg' : 'bg-white/50 hover:bg-white/80 border'
                 }`}
-                onClick={() => setActiveStepId(activeStepId === step.node.id ? null : step.node.id)}
+                onClick={() => setActiveStepId(activeStepId === step.node!.id ? null : step.node!.id)}
               >
                 <div className="relative flex-shrink-0">
                   <div className="absolute w-4 h-4 rounded-full border-4 border-white shadow-lg hidden md:block" style={{ backgroundColor: step.color, top: '1.5rem', left: '-3.25rem' }}></div>
                   <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-xl text-white font-bold shadow-lg" style={{ backgroundColor: step.color }}>
-                    {step.node.icon || step.node.name.substring(0, 2)}
+                    {step.node!.icon || (step.node!.name && step.node!.name.substring(0, 2)) || '?'}
                   </div>
                   <div className="absolute -top-2 -right-2 w-8 h-8 bg-gray-800 text-white rounded-full flex items-center justify-center text-sm font-bold">
                     {index + 1}
@@ -73,11 +73,11 @@ const SimpleCareerPath: React.FC<SimpleCareerPathProps> = ({ pathType, className
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xl font-bold text-gray-800">{step.node.name}</h4>
+                    <h4 className="text-xl font-bold text-gray-800">{step.node!.name}</h4>
                     {showDetails && <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">{step.timeline}</span>}
                   </div>
-                  <p className="text-gray-600 text-lg mb-3">{step.node.description}</p>
-                  {(activeStepId === step.node.id || showDetails) && (
+                  <p className="text-gray-600 text-lg mb-3">{step.node!.description}</p>
+                  {(activeStepId === step.node!.id || showDetails) && step.details && (
                     <div className="mt-4 p-4 bg-white/80 rounded-xl border">
                       <h5 className="font-semibold text-gray-800 mb-3">Key Points:</h5>
                       <ul className="space-y-2">
