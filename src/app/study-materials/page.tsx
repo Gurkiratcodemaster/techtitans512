@@ -57,7 +57,7 @@ const getDifficultyColor = (difficulty: StudyMaterial['difficulty']) => {
 };
 
 export default function StudyMaterialsPage() {
-  const [loaded, setLoaded] = useState(false);
+  
   const [studyMaterials, setStudyMaterials] = useState<StudyMaterial[]>([]);
   const [filteredMaterials, setFilteredMaterials] = useState<StudyMaterial[]>([]);
   const [selectedSubject, setSelectedSubject] = useState("All");
@@ -67,7 +67,7 @@ export default function StudyMaterialsPage() {
 
   // Set 'loaded' to true once the page is mounted for the animations
   useEffect(() => {
-    setLoaded(true);
+    
   }, []);
 
   // ✅ Fetch data from Supabase
@@ -137,11 +137,11 @@ export default function StudyMaterialsPage() {
           { value: subjects.filter(s => s !== 'All').length.toString(), label: "Subjects" },
           { value: classes.filter(c => c !== 'All').length.toString(), label: "Class Levels" }
         ]}
-        loaded={loaded}
+        
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Search and Filters */}
-        <div className={`bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 mb-12 border border-gray-100 transform transition-all duration-1000 delay-500 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 mb-12 border border-gray-100">
           <div className="flex flex-wrap gap-6 items-center justify-between mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Find Study Materials</h2>
           </div>
@@ -153,14 +153,14 @@ export default function StudyMaterialsPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-              <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="block w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-2xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300" placeholder="Search materials by title, description, or tags..." />
+              <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="block w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-2xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 " placeholder="Search materials by title, description, or tags..." />
             </div>
           </div>
           {/* Filters */}
           <div className="grid md:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">Subject</label>
-              <select value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300">
+              <select value={selectedSubject} onChange={(e) => setSelectedSubject(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 ">
                 {subjects.map(subject => (
                   <option key={subject} value={subject}>{subject}</option>
                 ))}
@@ -168,7 +168,7 @@ export default function StudyMaterialsPage() {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">Class</label>
-              <select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300">
+              <select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 ">
                 {classes.map(cls => (
                   <option key={cls} value={cls}>{cls}</option>
                 ))}
@@ -176,7 +176,7 @@ export default function StudyMaterialsPage() {
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">Type</label>
-              <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300">
+              <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 ">
                 {types.map(type => (
                   <option key={type} value={type}>{type}</option>
                 ))}
@@ -186,9 +186,9 @@ export default function StudyMaterialsPage() {
         </div>
         {/* Study Materials Grid */}
         {filteredMaterials.length > 0 ? (
-          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 transform transition-all duration-1000 delay-700 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredMaterials.map((material, index) => (
-              <div key={material.id} className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden hover:-translate-y-3 transform border border-gray-100" style={{animationDelay: `${index * 100}ms`}}>
+              <div key={material.id} className="bg-white rounded-3xl shadow-xl hover:shadow-2xl  overflow-hidden hover:-translate-y-3 transform border border-gray-100" style={{animationDelay: `${index * 100}ms`}}>
                 <div className="relative">
                   <img src={material.thumbnail} alt={material.title} className="w-full h-48 object-cover" />
                   <div className="absolute top-4 left-4">
@@ -238,7 +238,7 @@ export default function StudyMaterialsPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-xl font-bold text-blue-600 mb-2">{material.price}</p>
-                      <button className="px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                      <button className="px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700  shadow-lg hover:shadow-xl">
                         {material.price === "Free" ? "Access Now" : "Purchase"}
                       </button>
                     </div>
@@ -248,7 +248,7 @@ export default function StudyMaterialsPage() {
             ))}
           </div>
         ) : (
-          <div className={`text-center py-20 transform transition-all duration-1000 delay-600 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="text-center py-20">
             <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-200">
               <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -256,18 +256,18 @@ export default function StudyMaterialsPage() {
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-4">No study materials found</h3>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">Try adjusting your search term or filters to find what you're looking for.</p>
-            <button onClick={resetFilters} className="px-8 py-4 bg-gradient-to-r from-black from-20% via-blue-600 via-50% to-black to-80% text-white font-semibold rounded-xl hover:from-gray-900 hover:from-20% hover:via-blue-700 hover:via-50% hover:to-gray-900 hover:to-80% transition-all duration-300 shadow-lg hover:shadow-xl">
+            <button onClick={resetFilters} className="px-8 py-4 bg-gradient-to-r from-black from-20% via-blue-600 via-50% to-black to-80% text-white font-semibold rounded-xl hover:from-gray-900 hover:from-20% hover:via-blue-700 hover:via-50% hover:to-gray-900 hover:to-80%  shadow-lg hover:shadow-xl">
               Clear All Filters
             </button>
           </div>
         )}
         {/* Popular Categories Section */}
-        <div className={`mt-20 transform transition-all duration-500 delay-400 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
+        <div className="mt-20">
           <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Popular Categories</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {subjects.filter(s => s !== "All").map(subject => (
-              <button key={subject} onClick={() => setSelectedSubject(subject)} className="p-8 bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 text-center group hover:-translate-y-2 border border-gray-100">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:from-blue-200 group-hover:to-gray-200 transition-all duration-300 border border-blue-200">
+              <button key={subject} onClick={() => setSelectedSubject(subject)} className="p-8 bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl  text-center group hover:-translate-y-2 border border-gray-100">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:from-blue-200 group-hover:to-gray-200  border border-blue-200">
                   <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
@@ -284,3 +284,5 @@ export default function StudyMaterialsPage() {
     </div>
   );
 }
+
+

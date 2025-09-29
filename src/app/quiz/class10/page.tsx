@@ -29,7 +29,7 @@ export default function Class10Quiz() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  
 
   // Quiz state
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -98,7 +98,7 @@ export default function Class10Quiz() {
         setError('Failed to load quiz questions');
       } finally {
         setIsLoading(false);
-        setTimeout(() => setLoaded(true), 100);
+        
       }
     };
 
@@ -300,7 +300,7 @@ export default function Class10Quiz() {
       <HeroSection 
         title={showResults ? "Your Quiz Results" : "Class 10 Career Assessment"}
         subtitle={showResults ? "Here's what we recommend based on your answers" : "Discover your career interests and potential paths after Class 10"}
-        loaded={loaded}
+        
       />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-16">
@@ -362,17 +362,17 @@ export default function Class10Quiz() {
               <div className="text-center mt-12 space-x-4">
                 <button
                   onClick={restartQuiz}
-                  className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:from-blue-600 hover:to-blue-700 transition-all duration-300 font-semibold hover:scale-105"
+                  className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:from-blue-600 hover:to-blue-700  font-semibold hover:scale-105"
                 >
                   Retake Quiz
                 </button>
                 <Link href="/career-paths">
-                  <span className="inline-block px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:to-blue-700 transition-all duration-300 font-semibold hover:scale-105">
+                  <span className="inline-block px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full hover:to-blue-700  font-semibold hover:scale-105">
                     Explore Career Paths
                   </span>
                 </Link>
                 <Link href="/">
-                  <span className="inline-block px-8 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-full hover:from-gray-600 hover:to-gray-700 transition-all duration-300 font-semibold hover:scale-105">
+                  <span className="inline-block px-8 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-full hover:from-gray-600 hover:to-gray-700  font-semibold hover:scale-105">
                     Back to Home
                   </span>
                 </Link>
@@ -400,7 +400,7 @@ export default function Class10Quiz() {
                     {/* Progress Bar */}
                     <div className="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
                       <div
-                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full "
                         style={{ width: `${progress}%` }}
                       >
                         <div className="absolute top-0 left-0 w-full h-full bg-white/20" />
@@ -412,10 +412,7 @@ export default function Class10Quiz() {
                       {questions.map((_, index) => (
                         <div
                           key={index}
-                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            index === currentQuestion ? 'bg-blue-600 scale-125' : 
-                            index < currentQuestion ? 'bg-blue-400' : 'bg-gray-300'
-                          }`}
+                          className="w-2 h-2 rounded-full"
                         />
                       ))}
                     </div>
@@ -433,9 +430,7 @@ export default function Class10Quiz() {
                           key={index}
                           onClick={() => handleAnswer(index)}
                           disabled={isTransitioning}
-                          className={`w-full p-4 text-left bg-white/50 hover:bg-white/80 rounded-2xl transition-all duration-300 border border-gray-200 hover:border-blue-300 hover:shadow-md group hover:scale-[1.02] ${
-                            isTransitioning ? 'cursor-not-allowed opacity-50' : ''
-                          }`}
+                          className="w-full p-4 text-left bg-white/50 hover:bg-white/80 rounded-2xl  border border-gray-200 hover:border-blue-300 hover:shadow-md group hover:scale-[1.02]"
                         >
                           <div className="flex items-start">
                             <div className="w-8 h-8 bg-gray-100 rounded-full mr-4 flex items-center justify-center mt-1 group-hover:bg-blue-50 transition-colors duration-200">
@@ -463,3 +458,5 @@ export default function Class10Quiz() {
     </div>
   );
 }
+
+

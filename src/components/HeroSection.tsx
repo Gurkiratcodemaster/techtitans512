@@ -3,17 +3,12 @@ import React from 'react';
 interface HeroSectionProps {
   title: string;
   subtitle: string;
-  stats?: Array<{
-    value: string | number;
-    label: string;
-  }>;
   loaded?: boolean;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   title,
   subtitle,
-  stats = [],
   loaded = true
 }) => {
   return (
@@ -27,21 +22,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <p className="text-xl md:text-2xl text-gray-200 font-medium mb-8 max-w-3xl mx-auto">
             {subtitle}
           </p>
-          
-          {/* Stats */}
-          {stats.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-              {stats.map((stat, index) => (
-                <div 
-                  key={index}
-                  className={`bg-white/10 backdrop-blur-sm rounded-lg p-4 transform transition-all duration-1000 delay-${200 + (index * 100)} ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}
-                >
-                  <div className="text-3xl font-bold text-white">{stat.value}</div>
-                  <div className="text-blue-100">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </div>

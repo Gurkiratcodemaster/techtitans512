@@ -19,6 +19,7 @@ export default function ProfileSetup() {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
+    role: '',
     class_level: '',
     interests: [] as string[],
     career_goals: '',
@@ -75,11 +76,19 @@ export default function ProfileSetup() {
       if (result.success) {
         alert('Profile saved successfully!');
         
-        // Redirect based on class level
-        if (formData.class_level === '10th') {
-          router.push('/quiz/class10');
-        } else if (formData.class_level === '12th') {
-          router.push('/quiz/class12');
+        // Redirect based on role and class level
+        if (formData.role === 'student') {
+          if (formData.class_level === '10th') {
+            router.push('/quiz/class10');
+          } else if (formData.class_level === '12th') {
+            router.push('/quiz/class12');
+          } else {
+            router.push('/dashboard/student');
+          }
+        } else if (formData.role === 'teacher') {
+          router.push('/dashboard/teacher');
+        } else if (formData.role === 'admin') {
+          router.push('/dashboard/admin');
         } else {
           router.push('/dashboard');
         }
@@ -133,6 +142,17 @@ export default function ProfileSetup() {
                 value={formData.full_name}
                 onChange={(e) => setFormData(prev => ({...prev, full_name: e.target.value}))}
               />
+
+              <select
+                className="w-full p-3 border rounded-lg"
+                value={formData.role}
+                onChange={(e) => setFormData(prev => ({...prev, role: e.target.value}))}
+              >
+                <option value="">Select Your Role</option>
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="admin">Admin</option>
+              </select>
 
               <select
                 className="w-full p-3 border rounded-lg"
@@ -217,7 +237,7 @@ export default function ProfileSetup() {
               <button
                 onClick={nextStep}
                 disabled={
-                  (step === 1 && (!formData.full_name || !formData.class_level)) ||
+                  (step === 1 && (!formData.full_name || !formData.role || !formData.class_level)) ||
                   (step === 2 && formData.interests.length === 0)
                 }
                 className="ml-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"

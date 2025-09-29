@@ -20,7 +20,7 @@ interface Scholarship {
 }
 
 export default function ScholarshipsPage() {
-  const [loaded, setLoaded] = useState(false);
+  
   
   // ✨ ADDED: States for data, loading, and errors
   const [scholarships, setScholarships] = useState<Scholarship[]>([]);
@@ -41,8 +41,8 @@ export default function ScholarshipsPage() {
   const statuses = ["All", "Open", "Closed", "Upcoming"];
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 100);
-    return () => clearTimeout(timer);
+    
+    
   }, []);
 
   // ✨ ADDED: useEffect to fetch data from Supabase on component mount
@@ -158,7 +158,7 @@ export default function ScholarshipsPage() {
       <div className="relative overflow-hidden bg-gradient-to-r from-gray-800 via-blue-600 to-black">
         <div className="absolute inset-0 bg-black opacity-10"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className={`text-center transform transition-all duration-1000 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4">
               Scholarships Directory
             </h1>
@@ -168,15 +168,15 @@ export default function ScholarshipsPage() {
             
             {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-              <div className={`bg-white/10 backdrop-blur-sm rounded-lg p-4 transform transition-all duration-1000 delay-200 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-3xl font-bold text-white">{scholarships.length}</div>
                 <div className="text-blue-100">Total Scholarships</div>
               </div>
-              <div className={`bg-white/10 backdrop-blur-sm rounded-lg p-4 transform transition-all duration-1000 delay-300 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-3xl font-bold text-white">{categories.filter(c => c !== 'All').length}</div>
                 <div className="text-gray-200">Categories</div>
               </div>
-              <div className={`bg-white/10 backdrop-blur-sm rounded-lg p-4 transform transition-all duration-1000 delay-400 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                 <div className="text-3xl font-bold text-white">{filteredScholarships.filter(s => s.status === 'Open').length}</div>
                 <div className="text-gray-200">Open Now</div>
               </div>
@@ -190,7 +190,7 @@ export default function ScholarshipsPage() {
           {/* ... (Header and Alert Banner are fine) ... */}
 
           {/* Search and Filters */}
-          <div className={`bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 mb-12 border border-gray-100 transform transition-all duration-1000 delay-500 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 mb-12 border border-gray-100">
             <div className="flex flex-wrap gap-6 items-center justify-between mb-8">
               <h2 className="text-3xl font-bold text-gray-900">Find Scholarships</h2>
             </div>
@@ -206,7 +206,7 @@ export default function ScholarshipsPage() {
                   type="text" 
                   value={searchTerm} 
                   onChange={(e) => setSearchTerm(e.target.value)} 
-                  className="block w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-2xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300" 
+                  className="block w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-2xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 " 
                   placeholder="Search scholarships by title, provider, or tags..." 
                 />
               </div>
@@ -218,7 +218,7 @@ export default function ScholarshipsPage() {
                 <select 
                   value={selectedCategory} 
                   onChange={(e) => setSelectedCategory(e.target.value)} 
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 "
                 >
                   {categories.map(category => (
                     <option key={category} value={category}>{category}</option>
@@ -230,7 +230,7 @@ export default function ScholarshipsPage() {
                 <select 
                   value={selectedLevel} 
                   onChange={(e) => setSelectedLevel(e.target.value)} 
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 "
                 >
                   {levels.map(level => (
                     <option key={level} value={level}>{level}</option>
@@ -242,7 +242,7 @@ export default function ScholarshipsPage() {
                 <select 
                   value={selectedStatus} 
                   onChange={(e) => setSelectedStatus(e.target.value)} 
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white text-gray-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 "
                 >
                   {statuses.map(status => (
                     <option key={status} value={status}>{status}</option>
@@ -256,11 +256,7 @@ export default function ScholarshipsPage() {
               <div className="flex bg-gray-100 rounded-xl p-1">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    viewMode === 'grid'
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M3 3h7v7H3V3zm0 11h7v7H3v-7zm11-11h7v7h-7V3zm0 11h7v7h-7v-7z"/>
@@ -269,11 +265,7 @@ export default function ScholarshipsPage() {
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                    viewMode === 'list'
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -292,7 +284,7 @@ export default function ScholarshipsPage() {
 
           {/* Loading State */}
           {loading && (
-            <div className={`text-center py-20 transform transition-all duration-1000 delay-600 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <div className="text-center py-20">
               <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-200">
                 <svg className="w-12 h-12 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -306,7 +298,7 @@ export default function ScholarshipsPage() {
 
           {/* Error State */}
           {error && (
-            <div className={`text-center py-20 bg-blue-50 rounded-3xl border border-blue-200 transform transition-all duration-1000 delay-600 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <div className="text-center py-20 bg-blue-50 rounded-3xl border border-blue-200">
               <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 border border-blue-200">
                 <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
@@ -319,15 +311,15 @@ export default function ScholarshipsPage() {
 
           {/* Scholarships Grid/List */}
           {!loading && !error && filteredScholarships.length > 0 && (
-            <div className={`${
+            <div className="${
               viewMode === 'grid' 
                 ? 'grid grid-cols-1 lg:grid-cols-2 gap-8' 
                 : 'space-y-6'
-            } transform transition-all duration-1000 delay-700 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            }">
               {filteredScholarships.map((scholarship, index) => (
                 <div 
                   key={scholarship.id} 
-                  className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden hover:-translate-y-2 transform border border-gray-100"
+                  className="bg-white rounded-3xl shadow-xl hover:shadow-2xl  overflow-hidden hover:-translate-y-2 transform border border-gray-100"
                   style={{animationDelay: `${index * 100}ms`}}
                 >
                   {viewMode === 'grid' ? (
@@ -397,7 +389,7 @@ export default function ScholarshipsPage() {
                           href={scholarship.website} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="flex-1 px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl text-center"
+                          className="flex-1 px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700  shadow-lg hover:shadow-xl text-center"
                         >
                           Apply Now
                         </a>
@@ -410,10 +402,10 @@ export default function ScholarshipsPage() {
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(scholarship.status)}`}>
+                              <span className="px-3 py-1 rounded-full text-xs font-bold">
                                 {scholarship.status}
                               </span>
-                              <span className={`px-3 py-1 rounded-full text-xs font-bold ${getCategoryColor(scholarship.category)}`}>
+                              <span className="px-3 py-1 rounded-full text-xs font-bold">
                                 {scholarship.category}
                               </span>
                             </div>
@@ -465,7 +457,7 @@ export default function ScholarshipsPage() {
                               href={scholarship.website} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300"
+                              className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 "
                             >
                               Apply Now
                             </a>
@@ -481,7 +473,7 @@ export default function ScholarshipsPage() {
           
           {/* No Results */}
           {!loading && !error && filteredScholarships.length === 0 && (
-            <div className={`text-center py-20 transform transition-all duration-1000 delay-600 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            <div className="text-center py-20">
               <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-200">
                 <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -496,7 +488,7 @@ export default function ScholarshipsPage() {
                   setSelectedLevel("All");
                   setSelectedStatus("Open");
                 }}
-                className="px-8 py-4 bg-gradient-to-r from-black from-20% via-blue-600 via-50% to-black to-80% text-white font-semibold rounded-xl hover:from-gray-900 hover:from-20% hover:via-blue-700 hover:via-50% hover:to-gray-900 hover:to-80% transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="px-8 py-4 bg-gradient-to-r from-black from-20% via-blue-600 via-50% to-black to-80% text-white font-semibold rounded-xl hover:from-gray-900 hover:from-20% hover:via-blue-700 hover:via-50% hover:to-gray-900 hover:to-80%  shadow-lg hover:shadow-xl"
               >
                 Clear All Filters
               </button>
@@ -505,16 +497,16 @@ export default function ScholarshipsPage() {
 
           {/* Popular Categories Section */}
           {!loading && !error && (
-            <div className={`mt-20 transform transition-all duration-500 delay-400 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
+            <div className="mt-20">
               <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">Popular Categories</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                 {categories.filter(c => c !== "All").map(category => (
                   <button 
                     key={category} 
                     onClick={() => setSelectedCategory(category)} 
-                    className="p-8 bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 text-center group hover:-translate-y-2 border border-gray-100"
+                    className="p-8 bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl  text-center group hover:-translate-y-2 border border-gray-100"
                   >
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:from-blue-200 group-hover:to-gray-200 transition-all duration-300 border border-blue-200">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:from-blue-200 group-hover:to-gray-200  border border-blue-200">
                       <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
@@ -533,3 +525,5 @@ export default function ScholarshipsPage() {
     </div>
   );
 }
+
+

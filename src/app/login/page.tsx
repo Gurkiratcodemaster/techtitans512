@@ -100,17 +100,41 @@ export default function LoginPage() {
   };
 
   const handleLoginSuccess = async (user: any) => {
-    // Check if user has completed profile
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
+    try {
+      // Check if user has completed profile
+      const { data: profile, error } = await supabase
+        .from('user_profiles')
+        .select('*, role')
+        .eq('id', user.id)
+        .single();
 
-    if (!profile) {
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching profile:', error);
+      }
+
+      if (!profile) {
+        // No profile exists, redirect to profile setup
+        router.push('/profile-setup');
+      } else {
+        // Profile exists, redirect based on role
+        const userRole = profile.role || 'student';
+        switch (userRole) {
+          case 'student':
+            router.push('/dashboard/student');
+            break;
+          case 'teacher':
+            router.push('/dashboard/teacher');
+            break;
+          case 'admin':
+            router.push('/dashboard/admin');
+            break;
+          default:
+            router.push('/dashboard/student');
+        }
+      }
+    } catch (error) {
+      console.error('Error in handleLoginSuccess:', error);
       router.push('/profile-setup');
-    } else {
-      router.push('/dashboard');
     }
   };
 
@@ -238,8 +262,8 @@ export default function LoginPage() {
                       className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-300 bg-white/80"
                     >
                       <option value="student">Student</option>
-                      <option value="parent">Parent</option>
-                      <option value="counselor">Counselor</option>
+                      <option value="teacher">Teacher</option>
+                      <option value="admin">Admin (Institute)</option>
                     </select>
 
                     {role === "student" && (

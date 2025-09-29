@@ -23,7 +23,7 @@ interface College {
 }
 
 export default function CollegesPage() {
-  const [loaded, setLoaded] = useState(false);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,7 +36,7 @@ export default function CollegesPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoaded(true);
+      
     }, 50);
     return () => clearTimeout(timer);
   }, []);
@@ -132,12 +132,12 @@ export default function CollegesPage() {
           { value: states.length.toString(), label: "States Covered" },
           { value: types.length.toString(), label: "College Types" }
         ]}
-        loaded={loaded}
+        
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Filters Section */}
-        <div className={`bg-white rounded-2xl shadow-lg p-6 mb-8 transform transition-all duration-1000 delay-500 ${loaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
           <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Find Your Perfect College</h2>
             
@@ -146,7 +146,7 @@ export default function CollegesPage() {
               <span className="text-sm text-gray-600">View:</span>
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-all duration-200 ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                className="p-2 rounded-lg"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -154,7 +154,7 @@ export default function CollegesPage() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-all duration-200 ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                className="p-2 rounded-lg"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
@@ -177,7 +177,7 @@ export default function CollegesPage() {
                 placeholder="Search colleges, location, or state..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent "
               />
             </div>
 
@@ -185,7 +185,7 @@ export default function CollegesPage() {
             <select 
               value={selectedState} 
               onChange={(e) => setSelectedState(e.target.value)}
-              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent "
             >
               <option value="">All States</option>
               {states.map((state) => (
@@ -197,7 +197,7 @@ export default function CollegesPage() {
             <select 
               value={selectedType} 
               onChange={(e) => setSelectedType(e.target.value)}
-              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent "
             >
               <option value="">All Types</option>
               {types.map((type) => (
@@ -209,7 +209,7 @@ export default function CollegesPage() {
             <select 
               value={selectedCourse} 
               onChange={(e) => setSelectedCourse(e.target.value)}
-              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent "
             >
               <option value="">All Courses</option>
               {allCourses.map((course) => (
@@ -226,7 +226,7 @@ export default function CollegesPage() {
             {(searchTerm || selectedState || selectedType || selectedCourse) && (
               <button
                 onClick={resetFilters}
-                className="px-4 py-2 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-all duration-200 flex items-center gap-2"
+                className="px-4 py-2 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200  flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -270,7 +270,7 @@ export default function CollegesPage() {
                 {filteredColleges.map((college, index) => (
                   <div
                     key={college.id}
-                    className={`bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl  transform hover:-translate-y-1"
                     style={{ 
                       transitionDelay: `${Math.min(index * 100, 800)}ms`,
                       animation: loaded ? `slideInUp 0.6s ease-out ${Math.min(index * 0.1, 0.8)}s both` : undefined
@@ -304,7 +304,7 @@ export default function CollegesPage() {
 
                         {/* Type Badge */}
                         <div className="mb-4">
-                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold border ${getTypeColor(college.type)}`}>
+                          <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold border">
                             {college.type}
                           </span>
                         </div>
@@ -387,7 +387,7 @@ export default function CollegesPage() {
                               </svg>
                               {college.city}, {college.state}
                             </span>
-                            <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${getTypeColor(college.type)}`}>
+                            <span className="px-2 py-1 rounded-full text-xs font-semibold border">
                               {college.type}
                             </span>
                             {college.established && <span>Est. {college.established}</span>}
@@ -479,3 +479,5 @@ export default function CollegesPage() {
     </div>
   );
 }
+
+

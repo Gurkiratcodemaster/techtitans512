@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
       userId,
       email,
       full_name,
+      role,
       class_level,
       interests,
       career_goals,
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
       id: user.id,
       email: user.email || email,
       full_name: full_name || null,
+      role: role || null,
       class_level: class_level || null,
       interests: Array.isArray(interests) ? interests : [],
       career_goals: career_goals || null,
@@ -119,7 +121,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('POST /api/user-profile error:', error);
+    console.error('Profile creation error:', error);
     return NextResponse.json(
       { 
         error: 'Internal server error',
@@ -133,41 +135,59 @@ export async function POST(request: NextRequest) {
 // GET - Retrieve user profile
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Get authorization header
+    const authorization = request.headers.get('authorization');
     
-    // Get the current user from the session
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
+    if (!authorization || !authorization.startsWith('Bearer ')) {
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { error: 'Authorization header required' },
         { status: 401 }
       );
     }
 
+    const token = authorization.replace('Bearer ', '');
+
+    // Create Supabase client
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Verify the token and get user
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.error('Auth verification failed:', authError);
+      return NextResponse.json(
+        { error: 'Invalid authentication token' },
+        { status: 401 }
+      );
+    }
+
+    // Fetch user profile
     const { data: profile, error } = await supabase
       .from('user_profiles')
       .select('*')
       .eq('id', user.id)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error && error.code !== 'PGRST116') { // PGRST116 = not found
       console.error('Error fetching profile:', error);
       return NextResponse.json(
-        { error: 'Failed to fetch profile' },
+        { error: 'Database error', details: error.message },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      profile: profile || null 
+    return NextResponse.json({
+      success: true,
+      profile: profile || null
     });
 
   } catch (error) {
-    console.error('GET /api/user-profile error:', error);
+    console.error('Profile fetch error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
