@@ -1,16 +1,14 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import LoginButton from "./loginbutton";
 import { useAuth } from "@/contexts/AuthContext";
-
 
 export function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, loading, signOut } = useAuth();
-  // Dropdown close timer
-  let dropdownCloseTimer: NodeJS.Timeout | null = null;
+  const dropdownCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleDropdownToggle = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
@@ -22,10 +20,11 @@ export function Navbar() {
 
   // Helper to delay closing dropdown
   const handleDropdownMouseLeave = () => {
-    dropdownCloseTimer = setTimeout(() => setActiveDropdown(null), 150);
+    if (dropdownCloseTimerRef.current) clearTimeout(dropdownCloseTimerRef.current);
+    dropdownCloseTimerRef.current = setTimeout(() => setActiveDropdown(null), 200);
   };
   const handleDropdownMouseEnter = (dropdown: string) => {
-    if (dropdownCloseTimer) clearTimeout(dropdownCloseTimer);
+    if (dropdownCloseTimerRef.current) clearTimeout(dropdownCloseTimerRef.current);
     setActiveDropdown(dropdown);
   };
 
