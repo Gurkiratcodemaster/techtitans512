@@ -53,6 +53,10 @@ export default function TimelinePage() {
     }
   };
 
+  // Checkbox color utility (force blue for checked)
+  const checkboxClass = (checked: boolean) =>
+    `form-checkbox h-5 w-5 rounded text-blue-600 focus:ring-blue-500 border-blue-300 ${checked ? 'bg-blue-600 checked:bg-blue-600 checked:border-blue-600' : ''}`;
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'text-blue-700 bg-blue-50 border-blue-200';
@@ -175,9 +179,8 @@ export default function TimelinePage() {
                         <p className="text-gray-600 mb-2">{event.description}</p>
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                           <div className="flex items-center gap-1">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
+                            {/* Example checkbox, replace with actual checkbox logic if present */}
+                            {/* <input type="checkbox" checked={someCheckedState} className={checkboxClass(someCheckedState)} readOnly /> */}
                             <span>Deadline: {event.date}</span>
                           </div>
                           <div className="flex items-center gap-1">

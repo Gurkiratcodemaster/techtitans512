@@ -1,3 +1,7 @@
+/* Force blue accent color for all checkboxes when checked */
+input[type="checkbox"]:checked {
+  accent-color: #2563eb; /* Tailwind blue-600 */
+}
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';

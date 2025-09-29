@@ -16,7 +16,7 @@ export function FeatureCard({
   return (
     <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg">
       <div
-        className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4"
+        className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4" // removed hover/transition classes if any
         dangerouslySetInnerHTML={{ __html: icon_svg }}
       />
       <h3 className="text-xl font-bold text-gray-800 mb-3">
@@ -25,6 +25,7 @@ export function FeatureCard({
       <p className="text-gray-600">
         {description}
       </p>
+      {/* If there is a button, ensure only it has hover animation (not shown in this file, but if present in parent, keep hover on button only) */}
     </div>
   );
 }

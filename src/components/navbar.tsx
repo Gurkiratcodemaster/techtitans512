@@ -4,10 +4,13 @@ import { useState } from "react";
 import LoginButton from "./loginbutton";
 import { useAuth } from "@/contexts/AuthContext";
 
+
 export function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, loading, signOut } = useAuth();
+  // Dropdown close timer
+  let dropdownCloseTimer: NodeJS.Timeout | null = null;
 
   const handleDropdownToggle = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
@@ -15,6 +18,15 @@ export function Navbar() {
 
   const closeDropdown = () => {
     setActiveDropdown(null);
+  };
+
+  // Helper to delay closing dropdown
+  const handleDropdownMouseLeave = () => {
+    dropdownCloseTimer = setTimeout(() => setActiveDropdown(null), 150);
+  };
+  const handleDropdownMouseEnter = (dropdown: string) => {
+    if (dropdownCloseTimer) clearTimeout(dropdownCloseTimer);
+    setActiveDropdown(dropdown);
   };
 
   return (
@@ -40,46 +52,28 @@ export function Navbar() {
             {/* Education Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setActiveDropdown('education')}
-              onMouseLeave={() => setActiveDropdown(null)}
+              onMouseEnter={() => handleDropdownMouseEnter('education')}
+              onMouseLeave={handleDropdownMouseLeave}
             >
               <button
                 className="relative flex items-center px-3 py-2 text-gray-700 font-medium hover:text-blue-600 transition-colors duration-300 cursor-pointer group"
               >
                 Education
-                <svg className={`ml-1 w-4 h-4 transition-transform duration-200 ${activeDropdown === 'education' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
                 <span className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${activeDropdown === 'education' ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </button>
-              <div className={`absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 transform transition-all duration-200 origin-top ${
+              <div className={`absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 transform transition-all duration-200 origin-top z-50 ${
                 activeDropdown === 'education' 
                   ? 'opacity-100 scale-100 translate-y-0' 
                   : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-              }`}>
+              }`} onMouseEnter={() => handleDropdownMouseEnter('education')} onMouseLeave={handleDropdownMouseLeave}>
                 <Link href="/colleges" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors duration-150" onClick={closeDropdown}>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                    Colleges Directory
-                  </div>
+                  Colleges Directory
                 </Link>
                 <Link href="/study-materials" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors duration-150" onClick={closeDropdown}>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                    Study Materials
-                  </div>
+                  Study Materials
                 </Link>
                 <Link href="/scholarships" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors duration-150" onClick={closeDropdown}>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                    </svg>
-                    Scholarships
-                  </div>
+                  Scholarships
                 </Link>
               </div>
             </div>
@@ -87,54 +81,31 @@ export function Navbar() {
             {/* Career Guidance Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setActiveDropdown('career')}
-              onMouseLeave={() => setActiveDropdown(null)}
+              onMouseEnter={() => handleDropdownMouseEnter('career')}
+              onMouseLeave={handleDropdownMouseLeave}
             >
               <button
                 className="relative flex items-center px-3 py-2 text-gray-700 font-medium hover:text-blue-600 transition-colors duration-300 group"
               >
                 Career Guidance
-                <svg className={`ml-1 w-4 h-4 transition-transform duration-200 ${activeDropdown === 'career' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
                 <span className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${activeDropdown === 'career' ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </button>
-              <div className={`absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 transform transition-all duration-200 origin-top ${
+              <div className={`absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 transform transition-all duration-200 origin-top z-50 ${
                 activeDropdown === 'career' 
                   ? 'opacity-100 scale-100 translate-y-0' 
                   : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-              }`}>
+              }`} onMouseEnter={() => handleDropdownMouseEnter('career')} onMouseLeave={handleDropdownMouseLeave}>
                 <Link href="/quiz/class10" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors duration-150" onClick={closeDropdown}>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Class 10 Quiz
-                  </div>
+                  Class 10 Quiz
                 </Link>
                 <Link href="/quiz/class12" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors duration-150" onClick={closeDropdown}>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Class 12 Quiz
-                  </div>
+                  Class 12 Quiz
                 </Link>
                 <Link href="/career-paths" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors duration-150" onClick={closeDropdown}>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
-                    Career Path Mapping
-                  </div>
+                  Career Path Mapping
                 </Link>
                 <Link href="/chatbot" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors duration-150" onClick={closeDropdown}>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                    AI Career Chat
-                  </div>
+                  AI Career Chat
                 </Link>
               </div>
             </div>
@@ -152,8 +123,8 @@ export function Navbar() {
             {/* About & Contact Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setActiveDropdown('info')}
-              onMouseLeave={() => setActiveDropdown(null)}
+              onMouseEnter={() => handleDropdownMouseEnter('info')}
+              onMouseLeave={handleDropdownMouseLeave}
             >
               <button
                 className="relative flex items-center px-3 py-2 text-gray-700 font-medium hover:text-blue-600 transition-colors duration-300 cursor-pointer group"
