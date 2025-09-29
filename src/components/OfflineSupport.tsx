@@ -66,16 +66,7 @@ export default function OfflineSupport() {
         </div>
       )}
 
-      {/* Online Status Indicator (for debugging) */}
-      <div className="fixed bottom-4 right-4 z-40">
-        <div className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
-          isOnline 
-            ? 'bg-green-100 text-green-800 opacity-0 hover:opacity-100' 
-            : 'bg-red-100 text-red-800 opacity-100'
-        }`}>
-          {isOnline ? '🟢 Online' : '🔴 Offline'}
-        </div>
-      </div>
+  {/* Online Status Indicator removed */}
     </>
   );
 }

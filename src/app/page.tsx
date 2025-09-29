@@ -315,15 +315,7 @@ export default function Home() {
                 </div>
               )}
             </div>
-            <div className="flex justify-center space-x-2 mt-4">
-              {motivationalQuotes.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentQuote(index)}
-                  className="w-2 h-2 rounded-full"
-                />
-              ))}
-            </div>
+            {/* Removed quote navigation dots */}
           </div>
         </div>
       </div>
