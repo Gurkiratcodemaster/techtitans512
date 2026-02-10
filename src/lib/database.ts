@@ -1,17 +1,11 @@
-/**
- * Unified Database Client
- * Combines Supabase client, cache management, and client-side database operations
- */
 
 import { createClient } from '@supabase/supabase-js';
 
-// --- Supabase Client Initialization ---
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-// --- Cache Management ---
 interface CacheItem<T> {
   data: T;
   timestamp: number;

@@ -4,16 +4,21 @@ import { supabase } from "@/lib/database"; // adjust path if needed
 import { HeroSection } from "@/components/HeroSection";
 import { FeatureCard } from "@/app/about/FeatureCard";
 
+interface Feature {
+  title: string;
+  description: string;
+}
 export default function About() {
   const [features, setFeatures] = useState<
-    { title: string; description: string; icon_svg: string; negative: boolean }[]
+    Feature[]
   >([]);
 
   useEffect(() => {
     async function fetchFeatures() {
       const { data, error } = await supabase
         .from("features")
-        .select("title,description,icon_svg,negative");
+        .select("title,description");
+      console.log("Fetched features:", data, error);
       if (!error && data) {
         setFeatures(data);
       }
@@ -28,16 +33,13 @@ export default function About() {
         subtitle="Empowering individuals to make informed career decisions through personalized guidance and intelligent recommendations."
       />
 
-      <div className="pt-8 px-8">
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {features.map((feature, i) => (
               <FeatureCard
                 key={feature.title}
-                icon_svg={feature.icon_svg}
                 title={feature.title}
                 description={feature.description}
-                negative={feature.negative}
               />
             ))}
           </div>
@@ -52,6 +54,5 @@ export default function About() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
