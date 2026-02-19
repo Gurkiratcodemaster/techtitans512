@@ -4,7 +4,6 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import Footer from "@/components/footer";
-import OfflineSupport from "@/components/OfflineSupport";
 import CornerChatbot from "@/components/CornerChatbot";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -18,7 +17,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <AuthProvider>
       <div className="bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 min-h-screen">
-        <OfflineSupport />
         {!hideNavbar && <Navbar />}
         <main className="pt-16 pb-16 md:pb-20">{children}</main>
         {!hideNavbar && <Footer />}
